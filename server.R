@@ -51,32 +51,35 @@ shinyServer(function(input, output, session) {
     #########################################################################################################
     ####Database NO selection
 
-    Genes=read.table("WorkingSpace/Genes.txt",sep="\t", header= FALSE)
-    locus=unique(as.character(Genes[,6]))
-    locus=locus[-c(which(locus == ""))]
-    Intr=read.table("WorkingSpace/Introns_min.tsv",sep="\t",header=F)
-    rownames(Intr)=as.character(Intr[,1])
-    ##Extranames
-    alias=read.table("WorkingSpace/Alias.txt",sep="\t", header=F, stringsAsFactors=F)
-    rownames(alias)=as.character(alias[,1])
+    Genes=read.table("WorkingSpace/Gene_DB.tsv",sep="\t", header= FALSE, stringsAsFactors=F)
+    MainDB=read.table("WorkingSpace/Main_DB.tsv",sep="\t", header= FALSE, stringsAsFactors=F)
+    locusDB=unique(as.character(MainDB[,3]))
+    genesDB=unique(as.character(Genes[,1]))
+    transDB=as.character(Genes[,2])
+    rownames(Genes)=transDB
+    
+    SizesDB=read.table("WorkingSpace/CDS_sizes.tab",sep="\t",header=F)
+    rownames(SizesDB)=as.character(SizesDB[,2])
+
 ##################################################################################
     
     ##Main search function
     observeEvent(input$actiongenesearch, {
         output$ErrorMessage <- renderText({})
-        type="Not"
         wbid=""
-        mygene =input$geneinput
+        mygene = as.character(input$geneinput)
+
+        if(mygene %in% genesDB){
+            wbid=mygene
+            }
+        if(mygene %in% transDB){
+            wbid=as.character(unique(Genes[mygene,1]))
+            }
+        if(mygene %in% locusDB){
+            wbid=as.character(MainDB[which(mygene==as.character(MainDB[,3]))[1],1])
+            }
         
-        if(as.character(mygene) %in% rownames(alias)){
-            mygene=alias[as.character(mygene),2]
-        }
-        
-        if(as.character(mygene) %in% as.character(Genes[,4])){type=4}
-        if(as.character(mygene) %in% as.character(Genes[,5])){type=5}
-        if(as.character(mygene) %in% locus){type=6}
-        
-        if(type == "Not"){
+        if(wbid == ""){
             output$DesignControls <- renderUI({
                 HTML("<b>Gene not found</b>")
                 })
@@ -85,14 +88,13 @@ shinyServer(function(input, output, session) {
             output$downloadseq <- renderUI({})
             output$SimpleFragment <- renderText({})
             }else{
-                wbid=as.character(unique(Genes[which(mygene==Genes[,type]),4]))
         output$DesignControls <- renderUI({
             fluidRow(
                 
                 selectInput("isoform", label = HTML("<b>Isoform
                                                            [<a href=\"\" onclick=\"$('#explain_isoform').toggle(); return false;\">info</a>]
                                                            </b>"), 
-                            unique(Genes[which(as.character(Genes[,4])==wbid),5])),
+                            Genes[which(as.character(Genes[,1])==wbid),2]),
                 
                 HTML("
                      <p align=\"justify\"><div class=\"explain\" style=\"display: none\" id=\"explain_isoform\">
@@ -101,12 +103,12 @@ shinyServer(function(input, output, session) {
                 selectInput("selectMM", label = HTML("<b>piRNA specificity
                                                            [<a href=\"\" onclick=\"$('#explain_uniqueness').toggle(); return false;\">info</a>]
                                                            <br>(off-target homology)</b>"), 
-                            choices = list("at least five mismatches to genome" = 1, "at least four mismatches to genome" = 2, "at least three mismatches to genome" = 3,
-                                           "at least five mismatches to exome" = 4, "at least four mismatches to exome" = 5, "at least three mismatches to exome" = 6),
+                            choices = list("Targets at four mismatches" = 1, "Targets at three mismatches" = 2, 
+                                           "Targets at two mismatches" = 3),
                             selected = 1),
                 HTML("
                      <p align=\"justify\"><div class=\"explain\" style=\"display: none\" id=\"explain_uniqueness\">
-            This option specifies the minimum number of mismatches to off-target sites in the genome or exome of <i>C. elegans</i> or <i>C. briggsae</i>.
+            This option specifies the minimum number of mismatches to off-target sites in the exome of <i>C. elegans</i> or <i>C. briggsae</i>.
                                                  </div></p>
                      "),
             #     radioButtons("cluster", label = HTML("Select piRNA cluster
@@ -138,37 +140,22 @@ shinyServer(function(input, output, session) {
         output$ErrorMessage <- renderText({})
         
         matches=as.integer(input$selectMM)
-        mm=c(5,4,3,5,4,3)[matches]
-        isoform = input$isoform
+        mm=c(4,3,2)[matches]
+        isoform = as.character(input$isoform)
         ControlEx = input$FlaControl
         
-        wbid = as.character(unique(Genes[which(isoform==Genes[,5]),4]))
-        loc = as.character(unique(Genes[which(isoform==Genes[,5]),6]))
+        wbid = as.character(unique(Genes[isoform,1]))
+        loc = as.character(unique(Genes[isoform,3]))
         
-        strand = as.character(unique(Genes[which(isoform==Genes[,5]),7]))
-        genest = as.numeric(unique(Genes[which(isoform==Genes[,5]),2]))
-        geneend = as.numeric(unique(Genes[which(isoform==Genes[,5]),3]))
-        
-        file=paste(c("DataBase/",as.character(wbid),"_",as.character(isoform),"_",as.character(loc),".txt"),sep="",collapse="")
+        file=paste(c("DataBase/",as.character(wbid),"_",as.character(isoform),".txt"),sep="",collapse="")
         
         tab=read.table(file,sep="\t",header=F)
-        tab[,5]=as.integer((unlist(strsplit(as.character(tab[,2]),";")))[c(FALSE,TRUE)])
+        tab[,4]=as.integer((unlist(strsplit(as.character(tab[,2]),";")))[c(FALSE,TRUE)])
         tab[,2]=as.character((unlist(strsplit(as.character(tab[,2]),";")))[c(TRUE,FALSE)])
-        
-        if(matches>3){
-        tab[,3]=tab[,4]
-        }
-        
+
         Seltab=tab[which(tab[,3]>=mm),]
         
-        ##Remove Inside Introns
-        if(as.character(isoform) %in% rownames(Intr)){
-            ItrS=as.numeric(unlist(strsplit(as.character(Intr[as.character(isoform),2]),",")))
-            ItrE=as.numeric(unlist(strsplit(as.character(Intr[as.character(isoform),3]),",")))
-            idx= IRanges(Seltab[,1], Seltab[,1] + 19) %over% IRanges(ItrS,ItrE)
-            if(sum(idx) > 0){Seltab=Seltab[-which(idx),]}
-            }
-        
+        idx=c()
         if(nrow(Seltab)< 6){
             output$ErrorMessage <- renderText({
                 paste("Error: Not enough piRNAi fragments were found with the characterisitics described. Try to change to other parameters")
@@ -177,7 +164,6 @@ shinyServer(function(input, output, session) {
         }else{
             Seltab=Seltab[order(Seltab[,1]),]
             pos=quantile(Seltab[,1],c(0,.2,.4,.6,.8,1))
-            idx=c()
             idx=append(idx,which.min(abs(Seltab[,1]-pos[1])))
             idx=append(idx,which.min(abs(Seltab[,1]-pos[2])))
             idx=append(idx,which.min(abs(Seltab[,1]-pos[3])))
@@ -217,40 +203,15 @@ shinyServer(function(input, output, session) {
             if(ErrorFlag == 0){
                 
                 ##Table results
-                Pitab=Seltab[idx,c(1,2,5)]
-                
-                #Render piRNA coordinates 1-based
-                Pitab[,1] = Pitab[,1] + 1
-                
-                ##Get coords
-                if(strand =="-"){
-                    Pistrt=Pitab[,1]+19
-                    Piedt=Pitab[,1]
-                }else{
-                    Pistrt=Pitab[,1]
-                    Piedt=Pitab[,1]+19
-                }
-                
-                
-                ##Check if introns data
-                if(as.character(isoform) %in% rownames(Intr)){
-                    ItrS=as.numeric(unlist(strsplit(as.character(Intr[as.character(isoform),2]),",")))
-                    ItrE=as.numeric(unlist(strsplit(as.character(Intr[as.character(isoform),3]),",")))
-                }else{
-                    ItrS=c(1)
-                    ItrE=c(0)
-                    }
-                Ncoors=ConvCooTr2cDNA(Pistrt - genest +1 ,Piedt - genest +1 ,ItrS - genest +1 ,ItrE - genest+1)
-                lengcdna=(geneend-genest+1 - sum(ItrE-ItrS + 1))
-                if(strand =="-"){
-                    Ncoors[,2]= lengcdna - Ncoors[,2] + 1
-                    Ncoors[,1]= lengcdna - Ncoors[,1] + 1
-                    }
-                Pitab=cbind(paste(as.integer(Ncoors[,1]),"to", as.integer(Ncoors[,2])),Pitab[,c(2,3)])
+                Pitab=Seltab[idx,c(1,2,4)]
+                Pistrt=Pitab[,1]
+                Piedt=Pitab[,1]+19
+
+                Pitab=cbind(paste(as.integer(Pistrt),"to", as.integer(Piedt)),Pitab[,c(2,3)])
                 
                 colnames(Pitab)=c("Location","Sequence (antisense to target)","%GC")
-                colnames(Pitab)[1]=paste("cDNA location ","(",lengcdna,"bp long)",sep="")
-                Pitab=Pitab[order(Ncoors[,1]),]
+                colnames(Pitab)[1]=paste("cDNA location (", as.integer(SizesDB[isoform,3]),"bp long)",sep="")
+                Pitab=Pitab[order(Pistrt),]
                 
                 output$SelPiTabSummary <- renderUI({ HTML(paste0("<b>Synthetic piRNAs</b>",sep=""))})
                 output$SelPiTab=renderTable(Pitab)
@@ -724,19 +685,22 @@ shinyServer(function(input, output, session) {
     ###Advanced searchform
     ###Only upon retrieval of a gene in database new form will appear
     observeEvent(input$actionAdvsearch, {
-        type="Not"
         wbid=""
-        mygene =input$Advancedgeneinput
+        mygene = as.character(input$Advancedgeneinput)
         
-        if(as.character(mygene) %in% rownames(alias)){
-            mygene=alias[as.character(mygene),2]
+        if(mygene %in% genesDB){
+            wbid=mygene
         }
         
-        if(as.character(mygene) %in% as.character(Genes[,4])){type=4}
-        if(as.character(mygene) %in% as.character(Genes[,5])){type=5}
-        if(as.character(mygene) %in% locus){type=6}
+        if(mygene %in% transDB){
+            wbid=as.character(unique(Genes[mygene,1]))
+        }
         
-        if(type == "Not"){
+        if(mygene %in% locusDB){
+            wbid=as.character(MainDB[which(mygene==as.character(MainDB[,3]))[1],1])
+        }
+        
+        if(wbid == ""){
             output$AdvDesignControls <- renderUI({
                 HTML("<b>Gene not found</b>")
             })
@@ -744,7 +708,6 @@ shinyServer(function(input, output, session) {
             output$AdvDesignControls <- renderUI({})
             
         }else{
-            wbid=as.character(unique(Genes[which(mygene==Genes[,type]),4]))
             
             ##Control for table
             output$AdvDesignControls <- renderUI({
@@ -753,13 +716,13 @@ shinyServer(function(input, output, session) {
                     column(width = 3,selectInput("AdvIsoform", label = HTML("<b>Isoform
                                                            [<a href=\"\" onclick=\"$('#explain_isoform_advanced').toggle(); return false;\">info</a>]
                                                            </b>"), 
-                                unique(Genes[which(as.character(Genes[,4])==wbid),5]))),
+                                                 Genes[which(as.character(Genes[,1])==wbid),2])),
                     
                     column(width = 3, selectInput("AdvSelectMM", label = HTML("<b>piRNA specificity
                     [<a href=\"\" onclick=\"$('#explain_uniqueness_advanced').toggle(); return false;\">info</a>]<br>(off-target homology)
                                                            </b>"),
-                                                  choices = list("at least five mismatches to genome" = 1, "at least four mismatches to genome" = 2, "at least three mismatches to genome" = 3,
-                                                                 "at least five mismatches to exome" = 4, "at least four mismatches to exome" = 5, "at least three mismatches to exome" = 6),
+                                                  choices = list("Targets at four mismatches" = 1, "Targets at three mismatches" = 2, 
+                                                                 "Targets at two mismatches" = 3),
                                                                       selected = 1)),
                     column(width = 3, sliderInput("Posslider", label = HTML("<b>Relative position in cDNA (%)
                                                                             [<a href=\"\" onclick=\"$('#explain_Posgene').toggle(); return false;\">info</a>]
@@ -818,58 +781,36 @@ shinyServer(function(input, output, session) {
         input$AdvSelectMM}
         ,{
         ##Now design table; NOt sure if it will work as table should be most of the time be out of observe functions
-        ADVisoform = input$AdvIsoform
+        ADVisoform = as.character(input$AdvIsoform)
         
-        
-        wbid = as.character(unique(Genes[which(ADVisoform==Genes[,5]),4]))
-        loc = as.character(unique(Genes[which(ADVisoform==Genes[,5]),6]))
-        
-        strand = as.character(unique(Genes[which(ADVisoform==Genes[,5]),7]))
-        genest = as.numeric(unique(Genes[which(ADVisoform==Genes[,5]),2]))
-        geneend = as.numeric(unique(Genes[which(ADVisoform==Genes[,5]),3]))
-        
-        file=paste(c("DataBase/",as.character(wbid),"_",as.character(ADVisoform),"_",as.character(loc),".txt"),sep="",collapse="")
+        wbid = as.character(unique(Genes[ADVisoform,1]))
+        loc = as.character(unique(Genes[ADVisoform,3]))
+
+        file=paste(c("DataBase/",as.character(wbid),"_",as.character(ADVisoform),".txt"),sep="",collapse="")
         
         tab=read.table(file,sep="\t",header=F)
-        tab[,5]=as.integer((unlist(strsplit(as.character(tab[,2]),";")))[c(FALSE,TRUE)])
+        tab[,4]=as.integer((unlist(strsplit(as.character(tab[,2]),";")))[c(FALSE,TRUE)])
         tab[,2]=as.character((unlist(strsplit(as.character(tab[,2]),";")))[c(TRUE,FALSE)])
-        
-        #if(strand =="-"){tab[,1]= tab[,1]+18}
-        #tab[,1]=c(tab[,1]+2-genest)/(geneend-genest+1)
-        
-        #if(strand =="-"){tab[,1]= 1 - as.numeric(tab[,1])}
-        
-        ##Remove pis inside introns
-        if(as.character(ADVisoform) %in% rownames(Intr)){
-            ItrS=as.numeric(unlist(strsplit(as.character(Intr[as.character(ADVisoform),2]),",")))
-            ItrE=as.numeric(unlist(strsplit(as.character(Intr[as.character(ADVisoform),3]),",")))
-            idx= IRanges(tab[,1], tab[,1] + 19) %over% IRanges(ItrS,ItrE)
-            if(sum(idx) > 0){tab=tab[-which(idx),]}
-        }
         
         ##Partial patch to solve for when nopiRNA exist within the input ranges
         datatab = tab
         matches=as.integer(input$AdvSelectMM)
-        mm=c(5,4,3,5,4,3)[matches]
+        mm=c(4,3,2)[matches]
         minGC=input$Gcslider[1]
         maxGC=input$Gcslider[2]
         minPos=input$Posslider[1]/100
         maxPos=input$Posslider[2]/100
-        if(matches>3){
-            datatab[,3]=datatab[,4]
-        }
         
         datatab = datatab[which(datatab[,3]>=mm),]
         
-        datatab = datatab[which((datatab[,5]>=minGC)&(datatab[,5]<=maxGC)),]
-        
+        datatab = datatab[which((datatab[,4]>=minGC)&(datatab[,4]<=maxGC)),]
+
+        CDSlong=as.integer(SizesDB[ADVisoform,3])
         relpos=datatab[,1]
-        if(strand =="-"){relpos= relpos+18}
-        relpos=c(relpos+2-genest)/(geneend-genest+1)
-        if(strand =="-"){relpos= 1 - as.numeric(relpos)}
-        
+
+        relpos=relpos/CDSlong
+
         datatab = datatab[which((relpos>=minPos)&(relpos<=maxPos)),]
-        
         
         if( (nrow(datatab) == 0) | (ncol(datatab) == 0) ){
             output$AllPiTab <- DT::renderDataTable({ data.frame(Error=c("There is no piRNAi target sites with the given parameters")) })
@@ -877,47 +818,13 @@ shinyServer(function(input, output, session) {
         #output$AllPiTab <- DT::renderDataTable(DT::datatable({
         output$AllPiTab <- DT::renderDataTable({
 
-            ##Table results
-            Pitab=datatab
-            
-            #Render piRNA coordinates 1-based
-            Pitab[,1] = Pitab[,1] + 1
-            
-            ##Get coords
-            if(strand =="-"){
-                Pistrt=Pitab[,1]+19
-                Piedt=Pitab[,1]
-            }else{
-                Pistrt=Pitab[,1]
-                Piedt=Pitab[,1]+19
-            }
-            
-            
-            ##Check if introns data
-            if(as.character(ADVisoform) %in% rownames(Intr)){
-                ItrS=as.numeric(unlist(strsplit(as.character(Intr[as.character(ADVisoform),2]),",")))
-                ItrE=as.numeric(unlist(strsplit(as.character(Intr[as.character(ADVisoform),3]),",")))
-            }else{
-                ItrS=c(1)
-                ItrE=c(0)
-            }
-            
-            Ncoors=ConvCooTr2cDNA(Pistrt - genest +1 ,Piedt - genest +1 ,ItrS - genest +1 ,ItrE - genest+1)
-            lengcdna=(geneend-genest+1 - sum(ItrE-ItrS + 1))
-            if(strand =="-"){
-                Ncoors[,2]= lengcdna - Ncoors[,2] + 1
-                Ncoors[,1]= lengcdna - Ncoors[,1] + 1
-            }
-            
-            datatab[,1]=Ncoors[,1]
-            
-            datatab=datatab[order(Ncoors[,1]),]
-            
+            lengcdna=CDSlong
+            datatab=datatab[order(datatab[,1]),]
 
             Pdata=data.frame(
                 Location = paste(as.integer(datatab[,1]), "to", as.integer(datatab[,1])+19),
                 Sequence = datatab[,2],
-                GCcontent = datatab[,5],
+                GCcontent = datatab[,4],
                 Select = shinyInput(actionButton, as.character(datatab[,2]), 'button_', label = "Add to contruct", onclick = 'Shiny.onInputChange(\"select_button\",  this.id)' ),
                 stringsAsFactors = FALSE,
                 row.names = 1:nrow(datatab)
