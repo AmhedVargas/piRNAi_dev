@@ -120,6 +120,15 @@ shinyServer(function(input, output, session) {
             # For the moment, we use the cluster 21ur-1224 as a template to express 6 piRNAis fragments that are antisente to the transcript being targeted
             #                          </div></p>
             #          "),
+            radioButtons("Simp_dist", label = HTML("<b>cDNA targeting
+                                                               [<a href=\"\" onclick=\"$('#explain_simp_dist').toggle(); return false;\">info</a>]
+                                                               </b>"),
+            choices = list("Distributed" = 1, "Towards the 3' end" = 2), selected = 1, width='100%', inline= TRUE),
+        	HTML("
+                     <p align=\"justify\"><div class=\"explain\" style=\"display: none\" id=\"explain_simp_dist\">
+            Select the preferential place for piRNAi targeting, i.e. distributed uniformely or non-overlapping piRNAs taken sequentially from the 3' end.
+                                                 </div></p>
+                     "),
             checkboxInput("FlaControl", label = HTML("<b>Negative control
                                                                [<a href=\"\" onclick=\"$('#explain_control').toggle(); return false;\">info</a>]
                                                                </b>"), value = FALSE, width='100%'),
@@ -144,6 +153,8 @@ shinyServer(function(input, output, session) {
         isoform = as.character(input$isoform)
         ControlEx = input$FlaControl
         
+        wheretarg=as.integer(input$Simp_dist)
+        
         wbid = as.character(unique(Genes[isoform,1]))
         loc = as.character(unique(Genes[isoform,3]))
         
@@ -155,6 +166,8 @@ shinyServer(function(input, output, session) {
 
         Seltab=tab[which(tab[,3]>=mm),]
         
+        Seltab = Seltab[which((Seltab[,4]>=30)&(Seltab[,4]<=70)),]
+        
         idx=c()
         if(nrow(Seltab)< 6){
             output$ErrorMessage <- renderText({
@@ -163,6 +176,9 @@ shinyServer(function(input, output, session) {
             ErrorFlag=1
         }else{
             Seltab=Seltab[order(Seltab[,1]),]
+            
+            #Distributed location
+            if(wheretarg == 1){
             pos=quantile(Seltab[,1],c(0,.2,.4,.6,.8,1))
             idx=append(idx,which.min(abs(Seltab[,1]-pos[1])))
             idx=append(idx,which.min(abs(Seltab[,1]-pos[2])))
@@ -170,6 +186,16 @@ shinyServer(function(input, output, session) {
             idx=append(idx,which.min(abs(Seltab[,1]-pos[4])))
             idx=append(idx,which.min(abs(Seltab[,1]-pos[5])))
             idx=append(idx,which.min(abs(Seltab[,1]-pos[6])))
+            }else{
+            	#3' targeting
+            	idx=append(idx,nrow(Seltab))
+            	idx=append(idx,max(which(Seltab[,1] < (Seltab[idx[1],1]-21))))
+            	idx=append(idx,max(which(Seltab[,1] < (Seltab[idx[2],1]-21))))
+            	idx=append(idx,max(which(Seltab[,1] < (Seltab[idx[3],1]-21))))
+            	idx=append(idx,max(which(Seltab[,1] < (Seltab[idx[4],1]-21))))
+            	idx=append(idx,max(which(Seltab[,1] < (Seltab[idx[5],1]-21))))
+            	
+            	}
             
             if(length(which(dist(Seltab[idx,1])<=20)) > 0){
                 
@@ -182,7 +208,7 @@ shinyServer(function(input, output, session) {
         }
         
         ##Error for at least 6 piRNAs
-        if(length(idx) < 6){
+        if((length(idx) < 6) | (sum(is.na(Seltab[idx,1]))>0)){
             
             output$ErrorMessage <- renderText({
                 paste("Error: Not enough piRNAi sites to create the cluster. Try to change the parameters or use advanced function")
@@ -1189,7 +1215,7 @@ shinyServer(function(input, output, session) {
         
         content <- function(file) {
             file.copy(paste("WorkingSpace/users/",session_id,"/piRNAs.txt", sep=""), file)
-        },
+        }
     )
     
     ##Retrieve construct ape
@@ -1200,7 +1226,7 @@ shinyServer(function(input, output, session) {
         
         content <- function(file) {
             file.copy(paste("WorkingSpace/users/",session_id,"/construct.txt", sep=""), file)
-        },
+        }
     )
     
     ##Calculate GC
