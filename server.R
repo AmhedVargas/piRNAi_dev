@@ -129,6 +129,16 @@ shinyServer(function(input, output, session) {
             Select the preferential place for piRNAi targeting, i.e. distributed uniformely or non-overlapping piRNAs taken sequentially from the 3' end.
                                                  </div></p>
                      "),
+            ###Uracil complementary
+            radioButtons("Uracil_comp", label = HTML("<b>5' Uracil complementarity
+                                                               [<a href=\"\" onclick=\"$('#explain_ura_comp').toggle(); return false;\">info</a>]
+                                                               </b>"),
+                         choices = list("Distributed" = 1, "Cytosine" = 2), selected = 1, width='100%', inline= TRUE),
+            HTML("
+                     <p align=\"justify\"><div class=\"explain\" style=\"display: none\" id=\"explain_ura_comp\">
+            Select the preferential 5' piRNAi complementarity. <a href=\"https://www.sciencedirect.com/science/article/pii/S009286741830117X\">Evidence</a> suggest that native piRNAs binds preferentially to sites ending in Cytosine.
+                                                 </div></p>
+                     "),
             checkboxInput("FlaControl", label = HTML("<b>Negative control
                                                                [<a href=\"\" onclick=\"$('#explain_control').toggle(); return false;\">info</a>]
                                                                </b>"), value = FALSE, width='100%'),
@@ -155,12 +165,15 @@ shinyServer(function(input, output, session) {
         
         wheretarg=as.integer(input$Simp_dist)
         
+        fiveprimecomp=as.integer(input$Uracil_comp)
+        
         wbid = as.character(unique(Genes[isoform,1]))
         loc = as.character(unique(Genes[isoform,3]))
         
         file=paste(c("DataBase/",as.character(wbid),"_",as.character(isoform),".txt"),sep="",collapse="")
         
-        tab=read.table(file,sep="\t",header=F)
+        tab=read.table(file,sep="\t",header=F, stringsAsFactors=F)
+        tab[,5]=tab[,4]
         tab[,4]=as.integer((unlist(strsplit(as.character(tab[,2]),";")))[c(FALSE,TRUE)])
         tab[,2]=as.character((unlist(strsplit(as.character(tab[,2]),";")))[c(TRUE,FALSE)])
 
@@ -168,6 +181,9 @@ shinyServer(function(input, output, session) {
         
         Seltab = Seltab[which((Seltab[,4]>=30)&(Seltab[,4]<=70)),]
         
+        if(fiveprimecomp == 2){
+            Seltab = Seltab[which(as.character(Seltab[,5])=="C"),]
+            }
         idx=c()
         if(nrow(Seltab)< 6){
             output$ErrorMessage <- renderText({
@@ -229,13 +245,13 @@ shinyServer(function(input, output, session) {
             if(ErrorFlag == 0){
                 
                 ##Table results
-                Pitab=Seltab[idx,c(1,2,4)]
+                Pitab=Seltab[idx,c(1,2,4,5)]
                 Pistrt=Pitab[,1]
                 Piedt=Pitab[,1]+19
 
-                Pitab=cbind(paste(as.integer(Pistrt),"to", as.integer(Piedt)),Pitab[,c(2,3)])
+                Pitab=cbind(paste(as.integer(Pistrt),"to", as.integer(Piedt)),Pitab[,c(2,3,4)])
                 
-                colnames(Pitab)=c("Location","Sequence (antisense to target)","%GC")
+                colnames(Pitab)=c("Location","Sequence (antisense to target)","%GC","5' complementarity")
                 colnames(Pitab)[1]=paste("cDNA location (", as.integer(SizesDB[isoform,3]),"bp long)",sep="")
                 Pitab=Pitab[order(Pistrt),]
                 
@@ -739,7 +755,7 @@ shinyServer(function(input, output, session) {
             output$AdvDesignControls <- renderUI({
                 fluidRow(
                     
-                    column(width = 3,selectInput("AdvIsoform", label = HTML("<b>Isoform
+                    column(width = 2,selectInput("AdvIsoform", label = HTML("<b>Isoform
                                                            [<a href=\"\" onclick=\"$('#explain_isoform_advanced').toggle(); return false;\">info</a>]
                                                            </b>"), 
                                                  Genes[which(as.character(Genes[,1])==wbid),2])),
@@ -755,11 +771,18 @@ shinyServer(function(input, output, session) {
                                                                             </b>
                                                                             "),
                                                   0, 100, c(0, 100), step = 5)),
-                    column(width = 3, sliderInput("Gcslider", label = HTML("<b>GC content (%)
+                    column(width = 2, sliderInput("Gcslider", label = HTML("<b>GC content (%)
                                                                             [<a href=\"\" onclick=\"$('#explain_GCcont').toggle(); return false;\">info</a>]
                                                                             </b>
                                                                            ")
                                                   ,0, 100, c(30, 70), step = 5)),
+                    column(width = 2, checkboxGroupInput("CompGroup", label = HTML("<b>5' Complementarity (%)
+                                                                            [<a href=\"\" onclick=\"$('#explain_5p_Comp').toggle(); return false;\">info</a>]
+                                                                            </b>
+                                                                           "),
+                                                  choices=c("A","T","C","G"),
+                                                  selected=c("A","T","C","G"),
+                                                  inline=T)),
                     br(),
                     br(),
                     br(),
@@ -786,6 +809,11 @@ shinyServer(function(input, output, session) {
                      <p align=\"justify\"><div class=\"explain\" style=\"display: none\" id=\"explain_GCcont\">
             We recommend piRNAi fragments with GC content between 30 to 70%.
                                                  </div></p>
+                     "),
+            HTML("
+                     <p align=\"justify\"><div class=\"explain\" style=\"display: none\" id=\"explain_5p_Comp\">
+            Select the preferential 5' piRNAi complementarity. <a href=\"https://www.sciencedirect.com/science/article/pii/S009286741830117X\">Evidence</a> suggest that native piRNAs binds preferentially to sites ending in Cytosine.
+                                                 </div></p>
                      ")
                     )
             })
@@ -804,7 +832,9 @@ shinyServer(function(input, output, session) {
         input$AdvIsoform
         input$Gcslider
         input$Posslider
-        input$AdvSelectMM}
+        input$AdvSelectMM
+        input$CompGroup
+        }
         ,{
         ##Now design table; NOt sure if it will work as table should be most of the time be out of observe functions
         ADVisoform = as.character(input$AdvIsoform)
@@ -814,7 +844,8 @@ shinyServer(function(input, output, session) {
 
         file=paste(c("DataBase/",as.character(wbid),"_",as.character(ADVisoform),".txt"),sep="",collapse="")
         
-        tab=read.table(file,sep="\t",header=F)
+        tab=read.table(file,sep="\t",header=F, stringsAsFactors=F)
+        tab[,5]=tab[,4]
         tab[,4]=as.integer((unlist(strsplit(as.character(tab[,2]),";")))[c(FALSE,TRUE)])
         tab[,2]=as.character((unlist(strsplit(as.character(tab[,2]),";")))[c(TRUE,FALSE)])
         
@@ -826,6 +857,11 @@ shinyServer(function(input, output, session) {
         maxGC=input$Gcslider[2]
         minPos=input$Posslider[1]/100
         maxPos=input$Posslider[2]/100
+        
+        ##5prime comp
+        leadingnuc=as.character(input$CompGroup)
+        
+        datatab = datatab[which(as.character(datatab[,5]) %in% leadingnuc),]
         
         datatab = datatab[which(datatab[,3]>=mm),]
         
@@ -851,6 +887,7 @@ shinyServer(function(input, output, session) {
                 Location = paste(as.integer(datatab[,1]), "to", as.integer(datatab[,1])+19),
                 Sequence = datatab[,2],
                 GCcontent = datatab[,4],
+                Complementarity = datatab[,5],
                 Select = shinyInput(actionButton, as.character(datatab[,2]), 'button_', label = "Add to contruct", onclick = 'Shiny.onInputChange(\"select_button\",  this.id)' ),
                 stringsAsFactors = FALSE,
                 row.names = 1:nrow(datatab)
@@ -858,6 +895,7 @@ shinyServer(function(input, output, session) {
             
             colnames(Pdata)[1]=paste("cDNA location ","(",(lengcdna),"bp long)",sep="")
             colnames(Pdata)[2]="Sequence (antisense to target)"
+            colnames(Pdata)[4]="5' Complementarity"
             rownames(Pdata)=1:nrow(Pdata)
             Pdata
         #},server = FALSE, escape = FALSE, selection = 'none'))
