@@ -911,7 +911,7 @@ shinyServer(function(input, output, session) {
         input$FluoPosslider
         input$FluoGcslider
         input$FluoCompGroup
-        
+        input$ActionFluoSearch
         }, {
    
             ##Initial table         
