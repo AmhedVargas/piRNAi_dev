@@ -60,7 +60,13 @@ shinyServer(function(input, output, session) {
     
     SizesDB=read.table("WorkingSpace/CDS_sizes.tab",sep="\t",header=F)
     rownames(SizesDB)=as.character(SizesDB[,2])
-
+    
+    ##Load data to display for common fluorophores
+    fluo=read.table("WorkingSpace/Fluo_sizes.tab", sep="\t", stringsAsFactors=F)
+    colnames(fluo)=c("Name","File","Size")
+    
+    FluoPi=read.table("WorkingSpace/Fluo_master_simplified.tab",sep="\t",stringsAsFactors=F)
+    colnames(FluoPi)=c("Plasmid","piRNA","MMG","MMF","Pos","Nuc","GC")
 ##################################################################################
     
     ##Main search function
@@ -822,6 +828,151 @@ shinyServer(function(input, output, session) {
         
         
         }, ignoreInit = T)
+    
+    
+    ##Advance search but for common fluorophores
+    observeEvent(input$ActionFluoSearch, {
+            ##Control for table
+            output$AdvDesignControls <- renderUI({
+                fluidRow(
+                    column(width = 3, selectInput("FluoSelectMMG", label = HTML("<b>piRNA genomic specificity
+                    [<a href=\"\" onclick=\"$('#explain_uniqueness_fluo_g').toggle(); return false;\">info</a>]<br>(off-target homology)
+                                                           </b>"),
+                    choices = list("Targets at four mismatches" = 1, "Targets at three mismatches" = 2, 
+                                   "Targets at two mismatches" = 3),
+                    selected = 1)),
+                    
+                    column(width = 2, selectInput("FluoSelectMMF", label = HTML("<b>piRNA fluorophore specificity
+                    [<a href=\"\" onclick=\"$('#explain_uniqueness_fluo_f').toggle(); return false;\">info</a>]
+                                                           </b>"),
+                    choices = list("No filter" = 1,"Targets at four mismatches" = 2, "Targets at three mismatches" = 3, 
+                                   "Targets at two mismatches" = 4),
+                    selected = 1)),
+                    column(width = 3, sliderInput("FluoPosslider", label = HTML("<b>Relative position in cDNA (%)
+                                                                            [<a href=\"\" onclick=\"$('#explain_Posgene_fluo').toggle(); return false;\">info</a>]
+                                                                            </b>
+                                                                            "),
+                                                  0, 100, c(0, 100), step = 5)),
+                    column(width = 2, sliderInput("FluoGcslider", label = HTML("<b>GC content (%)
+                                                                            [<a href=\"\" onclick=\"$('#explain_GCcont_fluo').toggle(); return false;\">info</a>]
+                                                                            </b>
+                                                                           ")
+                                                  ,0, 100, c(30, 70), step = 5)),
+                    column(width = 2, checkboxGroupInput("FluoCompGroup", label = HTML("<b>5' Complementarity (%)
+                                                                            [<a href=\"\" onclick=\"$('#explain_5p_Comp_fluo').toggle(); return false;\">info</a>]
+                                                                            </b>
+                                                                           "),
+                                                         choices=c("A","T","C","G"),
+                                                         selected=c("A","T","C","G"),
+                                                         inline=T)),
+                    br(),
+                    br(),
+                    br(),
+                    br(),
+                    br(),
+                    HTML("
+                     <p align=\"justify\"><div class=\"explain\" style=\"display: none\" id=\"explain_uniqueness_fluo_g\">
+            This option specifies the minimum number of mismatches to off-target sites in the genome or exome of <i>C. elegans</i> or <i>C. briggsae</i>.
+            </div></p>
+                     "),
+            
+            HTML("
+                     <p align=\"justify\"><div class=\"explain\" style=\"display: none\" id=\"explain_uniqueness_fluo_f\">
+            This option specifies the minimum number of mismatches to off-target sites in other fluorescent proteins.
+                                                             </div></p>
+                     "),
+            
+            HTML("
+                     <p align=\"justify\"><div class=\"explain\" style=\"display: none\" id=\"explain_Posgene_fluo\">
+            Select the preferential place for piRNAi targeting. Ordering is from the 5' to the 3' of the selected isoform. 
+                                                 </div></p>
+                     "),
+            
+            HTML("
+                     <p align=\"justify\"><div class=\"explain\" style=\"display: none\" id=\"explain_GCcont_fluo\">
+            We recommend piRNAi fragments with GC content between 30 to 70%.
+                                                 </div></p>
+                     "),
+            HTML("
+                     <p align=\"justify\"><div class=\"explain\" style=\"display: none\" id=\"explain_5p_Comp_fluo\">
+            Select the preferential 5' piRNAi complementarity. <a href=\"https://www.sciencedirect.com/science/article/pii/S009286741830117X\">Evidence</a> suggest that native piRNAs binds preferentially to sites ending in Cytosine.
+                                                 </div></p>
+                     ")
+                )
+            })
+
+    }, ignoreInit = F)
+    
+    ##Observe changes to fluo parameters
+    observeEvent({
+        ##Parameters of previous options
+        input$FluoSelectMMG
+        input$FluoSelectMMF
+        input$FluoPosslider
+        input$FluoGcslider
+        input$FluoCompGroup
+        
+        }, {
+   
+            ##Initial table         
+            myfluo =  as.character(fluo[which(as.character(input$FluoInput) == fluo$Name),2])
+            lengcdna = as.numeric(fluo[which(as.character(input$FluoInput) == fluo$Name),3])
+            
+            datatab = FluoPi[which(as.character(FluoPi$Plasmid) == myfluo),]
+            
+            matches=as.integer(input$FluoSelectMMG)
+            mmg=c(4,3,2)[matches]
+            matches=as.integer(input$FluoSelectMMF)
+            mmf=c(0,4,3,2)[matches]
+            
+            minGC=input$FluoGcslider[1]
+            maxGC=input$FluoGcslider[2]
+            minPos=input$FluoPosslider[1]/100
+            maxPos=input$FluoPosslider[2]/100
+            
+            ##5prime comp
+            leadingnuc=as.character(input$FluoCompGroup)
+            
+            datatab = datatab[which(as.character(datatab$Nuc) %in% leadingnuc),]
+            
+            datatab = datatab[which(datatab$MMG>=mmg),]
+            datatab = datatab[which(datatab$MMF>=mmf),]
+            
+            datatab = datatab[which((datatab$GC>=minGC)&(datatab$GC<=maxGC)),]
+            
+            CDSlong=as.integer(lengcdna)
+            relpos=as.numeric(datatab$Pos)
+            
+            relpos=relpos/CDSlong
+            
+            datatab = datatab[which((relpos>=minPos)&(relpos<=maxPos)),]
+
+            
+                output$AllPiTab <- DT::renderDataTable({
+                    datatab=datatab[order(datatab$Pos),]
+                    
+                    Pdata=data.frame(
+                        Location = paste(as.integer(datatab$Pos), "to", as.integer(datatab$Pos)+19),
+                        Sequence = datatab[,2],
+                        GCcontent = datatab$GC,
+                        Complementarity = datatab$Nuc,
+                        Select = shinyInput(actionButton, as.character(datatab[,2]), 'button_', label = "Add to contruct", onclick = 'Shiny.onInputChange(\"select_button\",  this.id)' ),
+                        stringsAsFactors = FALSE,
+                        row.names = 1:nrow(datatab)
+                    )
+                    
+                    colnames(Pdata)[1]=paste("cDNA location ","(",(lengcdna),"bp long)",sep="")
+                    colnames(Pdata)[2]="Sequence (antisense to target)"
+                    colnames(Pdata)[4]="5' Complementarity"
+                    rownames(Pdata)=1:nrow(Pdata)
+                    Pdata
+                    #},server = FALSE, escape = FALSE, selection = 'none'))
+                },server = FALSE, escape = FALSE, selection = 'none')
+            
+            
+            
+        
+        },ignoreInit = F)
     
     ###Observe function for adding fragments based on piRNA table
     ##############################################################

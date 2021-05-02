@@ -8,13 +8,17 @@ library(shiny)
 library(shinythemes)
 library(DT)
 
+##Load data to display for common fluorophores
+fluo=read.table("WorkingSpace/Fluo_sizes.tab", sep="\t", stringsAsFactors=F)
+colnames(fluo)=c("Name","File","Size")
+
 # Define User interface
 shinyUI(
     fluidPage(
         tags$head(
             tags$link(rel="stylesheet",type = "text/css", href="bootstrap.min.css")
         ),
-        ##Costum extra styles: single sliders background and title of navbar 
+        ##Custom extra styles: single sliders background and title of navbar 
         tags$style(type = 'text/css', 
                    ".js-irs-none .irs-single, .js-irs-none .irs-bar-edge, .js-irs-none .irs-bar {
                           background: transparent;
@@ -127,8 +131,14 @@ shinyUI(
                          column(2,actionButton("actionconstruct", label = "Generate piRNAi cluster"))),
                          verbatimTextOutput("AdvancedErrorMessage"),
                          hr(),
-                         textAreaInput("Advancedgeneinput", label = "Target gene", value = "", resize="none", placeholder= "WormbaseID, transcript or gene name", rows=1),
-                         actionButton("actionAdvsearch", label = "Search for specific piRNAs"),
+                         textAreaInput("Advancedgeneinput", label = "Gene target", value = "", resize="none", placeholder= "WormbaseID, transcript or gene name", rows=1),
+                         actionButton("actionAdvsearch", label = "Search piRNAs"),
+                        br(),
+            br(),
+            selectInput("FluoInput", label = "Common fluorophore", choices=c(as.character(fluo$Name)), selected = 1),
+            actionButton("ActionFluoSearch", label = "Show piRNAs"),
+                        ##Dropdown menu
+                        ##New button 
                          hr(),
                          uiOutput("AdvDesignControls"),
                          hr(),
