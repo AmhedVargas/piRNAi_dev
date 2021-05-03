@@ -31,6 +31,23 @@ shinyUI(
         tags$style(type='text/css', '#AdvancedFragment {white-space: pre-wrap;}'),
         tags$style(type='text/css', '#SimpleFragment {white-space: pre-wrap;}'),
         tags$style(type='text/css', '#piBoxes .form-group {margin-bottom: 0px; margin-top: 0px;}'),
+        tags$style(type='text/css', "
+                   table {
+  font-family: arial, sans-serif;
+  border-collapse: collapse;
+  width: 100%;
+}
+
+td, th {
+  border: 1px solid #dddddd;
+  text-align: left;
+  padding: 8px;
+}
+
+tr:nth-child(even) {
+  background-color: #dddddd;
+}
+                   "),
         #Main tab pages
         navbarPage(
             title=actionLink("link_to_tabpanel_title", HTML("<b>piRNAi</b>")),
@@ -164,10 +181,52 @@ This app helps to "),
             ###About
             tabPanel("Downloads",
                      mainPanel(
-                         h3("Tracks (TO DO)"),
+                         h3("Tracks"),
                          HTML("<p align=\"justify\">
-                         <a href=\"https://s3.eu-central-1.amazonaws.com/wormbuilder.dev/tracks/piRNAi/Celegans.tar.gz\"><i>C. elegans</i> unique synthetic piRNAs (20-mers)</a><br>
-                         <a href=\"https://s3.eu-central-1.amazonaws.com/wormbuilder.dev/tracks/piRNAi/Cbriggsae.tar.gz\"><i>C. briggsae</i> unique synthetic piRNAs (20-mers)</a><br>
+                         <a href=\"https://s3.eu-central-1.amazonaws.com/wormbuilder.dev/Downloads/piRNAi_dev/Celegans.tar.gz\"><i>C. elegans</i> unique synthetic piRNAs (20-mers)</a><br>
+                         <br><h3>Sequences</h3>
+                         <table>
+  <tr>
+    <th>Name</th>
+    <th>Lab</th>
+    <th>GB file</th>
+  </tr>
+  <tr>
+    <td>ce-GFP</td>
+    <td>Froekjaer-Jensen lab</td>
+    <td><a href=\"https://s3.eu-central-1.amazonaws.com/wormbuilder.dev/Downloads/piRNAi_dev/Apes/ce-GFP_AlJohani.ape\">ce-GFP_AlJohani</a></td>
+  </tr>
+    <tr>
+    <td>ce-tagRFP</td>
+    <td>Froekjaer-Jensen lab</td>
+    <td><a href=\"https://s3.eu-central-1.amazonaws.com/wormbuilder.dev/Downloads/piRNAi_dev/Apes/ce-TagRFP-T_AlJohani.ape\">ce-TagRFP-T_AlJohani</a></td>
+  </tr>
+    <tr>
+    <td>GFP</td>
+    <td>Fire lab</td>
+    <td><a href=\"https://s3.eu-central-1.amazonaws.com/wormbuilder.dev/Downloads/piRNAi_dev/Apes/gfp(S65C_Fire).ape\">gfp(S65C_Fire)</a></td>
+  </tr>
+    <tr>
+    <td>mCherry</td>
+    <td>Oegema lab</td>
+    <td><a href=\"https://s3.eu-central-1.amazonaws.com/wormbuilder.dev/Downloads/piRNAi_dev/Apes/mCherry_Oegema.ape\">mCherry_Oegema</a></td>
+  </tr>
+    <tr>
+    <td>mCherry</td>
+    <td>Seydoux lab</td>
+    <td><a href=\"https://s3.eu-central-1.amazonaws.com/wormbuilder.dev/Downloads/piRNAi_dev/Apes/mCherry_Seydoux.ape\">mCherry_Seydoux</a></td>
+  </tr>
+    <tr>
+    <td>mKate2</td>
+    <td>Dickinson lab</td>
+    <td><a href=\"https://s3.eu-central-1.amazonaws.com/wormbuilder.dev/Downloads/piRNAi_dev/Apes/mKate2_Dickinson.ape\">mKate2_Dickinson</a></td>
+  </tr>
+    <tr>
+    <td>mNeonGreen</td>
+    <td>Dickinson lab</td>
+    <td><a href=\"https://s3.eu-central-1.amazonaws.com/wormbuilder.dev/Downloads/piRNAi_dev/Apes/mNeonGreen_Dickinson.ape\">mNeonGreen_Dickinson</a></td>
+  </tr>
+</table>
                       </p>")
                      )
             ),
