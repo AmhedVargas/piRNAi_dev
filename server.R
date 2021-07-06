@@ -728,6 +728,110 @@ shinyServer(function(input, output, session) {
             }
         }
 
+         ###Fifth
+        
+        if(clust == "5"){
+
+        pipi1=as.character(input$piRNAseq1_5)
+        pipi2=as.character(input$piRNAseq2_5)
+        pipi3=as.character(input$piRNAseq3_5)
+        pipi4=as.character(input$piRNAseq4_5)
+        pipi5=as.character(input$piRNAseq5_5)
+        pipi6=as.character(input$piRNAseq6_5)
+        pipi7=as.character(input$piRNAseq7_5)
+        pipi8=as.character(input$piRNAseq8_5)
+
+        ##Check for size
+        if((nchar(pipi1) == 0) | (nchar(pipi2) == 0) | (nchar(pipi3) == 0) | (nchar(pipi4) == 0) | (nchar(pipi5) == 0) | (nchar(pipi6) == 0)| (nchar(pipi7) == 0)| (nchar(pipi8) == 0)){
+            AdvancedErrorFlag=1
+            output$AdvancedErrorMessage <- renderText({
+                paste("Please pick at least 8 synthetic piRNAs")
+            })
+        }
+        
+        if(AdvancedErrorFlag == 0){
+        if((nchar(pipi1) != 20) | (nchar(pipi2) != 20) | (nchar(pipi3) != 20) | (nchar(pipi4) != 20) | (nchar(pipi5) != 20) | (nchar(pipi6) != 20)| (nchar(pipi7) != 20)| (nchar(pipi8) != 20)){
+            AdvancedErrorFlag=1
+            output$AdvancedErrorMessage <- renderText({
+                paste("Error: piRNAi sequences should be 20bp long")
+            })
+            }}
+        
+        #Check for input characters
+        toto=paste(pipi1,pipi2,pipi3,pipi4,pipi5,pipi6,pipi7,pipi8,sep="",collapse="")
+        if((AdvancedErrorFlag == 0) & (nchar(gsub("A|T|C|G","",toupper(toto))) != 0)){ ##Check for strange non ATCG characters
+            output$AdvancedErrorMessage <- renderText({
+                paste("Error: Unrecognized characters in piRNAi sequences")
+            })
+            AdvancedErrorFlag=1
+        }
+        
+        #Checkfor GC
+        if(AdvancedErrorFlag == 0){
+        Gcvals=sapply(c(pipi1,pipi2,pipi3,pipi4,pipi5,pipi6,pipi7,pipi8),CalculateGC)
+        if((sum(Gcvals <.3)+sum(Gcvals >.7))>0){
+            output$AdvancedErrorMessage <- renderText({
+                paste("Warning: some sequences have a GC content lower to 30% or higher to 70%")
+            })
+        }
+        }
+        
+        ##Main Routine
+        if(AdvancedErrorFlag == 0){
+            output$downloadconstruct <- renderUI({
+            
+                uno="gaatttgttattttctatcatattgacaaaacaaaaaaacatattcaaaa"
+                uno=tolower(uno)
+                seq1=as.character(reverseComplement(DNAString(as.character(pipi1))))
+                dos="aTtaccctaaattttaaaaaaataattatacaaacgtagtgaaacagcagattaattttccattaatatacaacaaaagtttgtttttaattgaaatttcagattttaagtaaat"
+                dos=tolower(dos)
+                seq2=as.character(reverseComplement(DNAString(as.character(pipi2))))
+                tres="aTcactaaagaattttcaagtaaactatataaacgtagtaaaacagcagaaatatttttagcattttt"
+                tres=tolower(tres)
+                seq3= as.character(reverseComplement(DNAString(as.character(pipi3))))
+                cuatro="atcaaagcacatatttttgacggaaactatatgaacttggtgaaacagtagaaattggaaaaaaaaatagtgtttcacaacttttatgaaagttttgattttgttttctaaattaaaaatatctttgagctatgataaaaattgatacaatcacttgtgtttcaactgcaatcatgttaattacggaatccgtgagctatttgaaaattgaaattatt"
+                cuatro=tolower(cuatro)
+                seq4=as.character(reverseComplement(DNAString(as.character(pipi4))))
+                cinco="attgaagtacaaaattcaacataaaattatatcaacaagttgaaacagttcttacattttttgaaaattgtcgactttttttttacattacccatgtaatttttaaatcaaatttaaaattattcgtattaccttagtaatgggattatttttgtttacgtgattgtcagttgaaaaattgattttttaatggtgacagggatctgtttcgttaagttactaaaataagaaccaattcctccaacttggAt"
+                cinco=tolower(cinco)
+                seq5= as.character(pipi5)
+                seis="aataaattattagtgattgtaagtaaaattatttcaaaatttttctacatgtatacactacatgttcacgagcataaagttaaaaataga"
+                seis=tolower(seis)
+                seq6=as.character(reverseComplement(DNAString(as.character(pipi6))))
+                siete="atcaagttgctaaatttttaatggaattaaatgaagatggtgaaactgtagaaaatttttaaaaatttttttgctgtttcacaattaaaaaaaataattcaggcaaaatttcaattgAt"
+                siete=tolower(siete)
+                seq7=as.character(pipi7)
+                ocho="gtattactatttttatcgactcaatcaccgatttagaaatttaaattcaagttttcaaactatgtataattttgtttaaaggtctttttgaattttttaacttgcaataaaagctgccatggaaattatcttttagcaatatgcacacttttaacaaggtaggcaggcgttttcgtacctacactgcagatcatatatattaattccgccaataaaagatcttgaaattaaaaaaaaactactaatttcaagacataattgaaaaatttagattat"
+                ocho=tolower(ocho)
+                seq8=as.character(reverseComplement(DNAString(as.character(pipi8))))
+                nueve="atcagaaaacacttttttttaacgttcttatgtgaacatttagaaacagtg"
+                nueve=tolower(nueve)
+                
+                xtracom=paste("Recoded 21ur-5764 locus via Advanced Search.")
+                binrev=c(TRUE, TRUE, TRUE, TRUE, FALSE, TRUE, FALSE, TRUE)
+                
+                Compseq=paste(c(uno,seq1,dos,seq2,tres,seq3,cuatro,seq4,cinco,seq5,seis,seq6,siete,seq7,ocho,seq8,nueve),sep="",collapse="")
+                
+                toadd=""
+                
+                pats= c(seq1,seq2,seq3,seq4,seq5,seq6,seq7,seq8)
+                fwdc= c(rep("#00ff00",8))
+                revc= c(rep("#ff0000",8))
+                tooltis= paste("piRNA",1:8)
+                
+                writeLines(PasteApe("21ur-5764_",Compseq,pats,fwdc,revc,tooltis,xtracom,toadd,binrev,"Caenorhabditis"),paste("WorkingSpace/users/",session_id,"/construct.txt", sep=""))
+                
+                output$AdvancedFragment <- renderText({
+                    paste("Recoded 21ur-5764 piRNA cluster\n",paste(Compseq,sep="",collapse=""),sep="",collapse="")
+                })
+                
+            downloadButton('DownConOut', 'Download annotated genbank file')
+            
+                })
+            
+            }
+        }
+
         }, ignoreInit = T)
     
     ###Advanced searchform
@@ -1263,7 +1367,61 @@ shinyServer(function(input, output, session) {
             }
         }
         
-        
+        ###Five
+        if(clust == "5"){
+            if(fill == 0){
+                if(as.character(input$piRNAseq1_5)==""){
+                    updateTextAreaInput(session, "piRNAseq1_5", value = selectedSeq)
+                    fill = 1
+                }}
+            
+            if(fill == 0){
+                if(as.character(input$piRNAseq2_5)==""){
+                    updateTextAreaInput(session, "piRNAseq2_5", value = selectedSeq)
+                    fill = 1
+                }}
+            
+            if(fill == 0){
+                if(as.character(input$piRNAseq3_5)==""){
+                    updateTextAreaInput(session, "piRNAseq3_5", value = selectedSeq)
+                    fill = 1
+                }}
+            
+            if(fill == 0){
+                if(as.character(input$piRNAseq4_5)==""){
+                    updateTextAreaInput(session, "piRNAseq4_5", value = selectedSeq)
+                    fill = 1
+                }}
+            
+            if(fill == 0){
+                if(as.character(input$piRNAseq5_5)==""){
+                    updateTextAreaInput(session, "piRNAseq5_5", value = selectedSeq)
+                    fill = 1
+                }}
+            
+            if(fill == 0){
+                if(as.character(input$piRNAseq6_5)==""){
+                    updateTextAreaInput(session, "piRNAseq6_5", value = selectedSeq)
+                    fill = 1
+                }}
+            
+            if(fill == 0){
+                if(as.character(input$piRNAseq7_5)==""){
+                    updateTextAreaInput(session, "piRNAseq7_5", value = selectedSeq)
+                    fill = 1
+                }}
+            
+            if(fill == 0){
+                if(as.character(input$piRNAseq8_5)==""){
+                    updateTextAreaInput(session, "piRNAseq8_5", value = selectedSeq)
+                    fill = 1
+                }}
+            
+            ##Send custom message
+            if(fill == 0){
+                showNotification("Construct has already 8 sequences.")
+            }
+        }
     })
     
     ####Other functions###########
@@ -1466,6 +1624,16 @@ shinyServer(function(input, output, session) {
             updateTextAreaInput(session, "piRNAseq6_4", value = "")
             updateTextAreaInput(session, "piRNAseq7_4", value = "")
             updateTextAreaInput(session, "piRNAseq8_4", value = "")
+        }
+        if(clust == "5"){
+            updateTextAreaInput(session, "piRNAseq1_5", value = "")
+            updateTextAreaInput(session, "piRNAseq2_5", value = "")
+            updateTextAreaInput(session, "piRNAseq3_5", value = "")
+            updateTextAreaInput(session, "piRNAseq4_5", value = "")
+            updateTextAreaInput(session, "piRNAseq5_5", value = "")
+            updateTextAreaInput(session, "piRNAseq6_5", value = "")
+            updateTextAreaInput(session, "piRNAseq7_5", value = "")
+            updateTextAreaInput(session, "piRNAseq8_5", value = "")
         }
         })
 })  

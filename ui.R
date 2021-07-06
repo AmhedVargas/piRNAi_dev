@@ -81,7 +81,7 @@ tr:nth-child(even) {
                         radioButtons("clustercon", label = HTML("Select piRNA cluster
                                                      [<a href=\"\" onclick=\"$('#explain_cluster_adv').toggle(); return false;\">info</a>]
                                                      "),
-                                     choices = list("21ur-1224 (six piRNAs)" = 1, "21ur-1692 (six piRNAs)" = 2, "21ur-8831 (seven piRNAs)" = 3, "21ur-1610 (eigth piRNAs)" = 4), selected = 1, width='100%', inline= TRUE),
+                                     choices = list("21ur-1224 (six piRNAs)" = 1, "21ur-1692 (six piRNAs)" = 2, "21ur-8831 (seven piRNAs)" = 3, "21ur-1610 (eigth piRNAs)" = 4, "21ur-5764 (eigth piRNAs)" = 5), selected = 1, width='100%', inline= TRUE),
                         HTML("
                      <p align=\"justify\"><div class=\"explain\" style=\"display: none\" id=\"explain_cluster_adv\">
             We recommend to use the cluster 21ur-1224.
@@ -136,6 +136,20 @@ tr:nth-child(even) {
                         textAreaInput("piRNAseq6_4", label="", rows=1, cols=21, resize="none", placeholder = "piRNA 6"),
                         textAreaInput("piRNAseq7_4", label="", rows=1, cols=21, resize="none", placeholder = "piRNA 7"),
                         textAreaInput("piRNAseq8_4", label="", rows=1, cols=21, resize="none", placeholder = "piRNA 8")),
+                        br()
+                        )),
+                        conditionalPanel(condition = "input.clustercon==5",
+                        column(4,
+                               tags$div(id="piBoxes",
+                                        class="my_class",
+                        textAreaInput("piRNAseq1_5", label="", rows=1, cols=21, resize="none", placeholder = "piRNA 1"),
+                        textAreaInput("piRNAseq2_5", label="", rows=1, cols=21, resize="none", placeholder = "piRNA 2"),
+                        textAreaInput("piRNAseq3_5", label="", rows=1, cols=21, resize="none", placeholder = "piRNA 3"),
+                        textAreaInput("piRNAseq4_5", label="", rows=1, cols=21, resize="none", placeholder = "piRNA 4"),
+                        textAreaInput("piRNAseq5_5", label="", rows=1, cols=21, resize="none", placeholder = "piRNA 5"),
+                        textAreaInput("piRNAseq6_5", label="", rows=1, cols=21, resize="none", placeholder = "piRNA 6"),
+                        textAreaInput("piRNAseq7_5", label="", rows=1, cols=21, resize="none", placeholder = "piRNA 7"),
+                        textAreaInput("piRNAseq8_5", label="", rows=1, cols=21, resize="none", placeholder = "piRNA 8")),
                         br()
                         )),
                         column(8,
