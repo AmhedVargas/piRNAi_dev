@@ -43,26 +43,7 @@ Alternatively, you can run the app in a graphical environment such as Rstudio.
 Simple design: Write the name or the WormBaseID of a *C. elegans/C. briggsae* gene. Follow by selecting an isoform to target and the specificity required, then let the program do the rest.
 Advanced design: In this form you can either write the piRNAi target sequences you want to use in a given piRNA cluster (4 options each with different piRNA disposition), or search across the piRNAi target database sequences that fit your needs.
 
-# To modify from here
-
-
-**Download tab**
-Download here the coordinates of piRNAi targeting sequences for *C. elegans* and *C. briggsae*.
-
-## Some characteristics to consider on the selection of piRNAi target sequences
-By design, piRNAi sequences target gene isoforms at no preferential location, i.e. 5’ or 3’ ends of the transcript.
-
-![piRNAi distribution inside gene bodies](https://github.com/AmhedVargas/piRNAi_v2/tree/master/img/SF1.jpg?raw=true)
-
-Similarly, the GC content of most of the piRNAi target sequences are optimal for synthesis.  
-
-![piRNAi GC content](https://github.com/AmhedVargas/piRNAi_v2/tree/master/img/SF2.jpg?raw=true)
-
-Finally, assuming a simple set of rules (at least 6 piRNAi targets separated by at least 5 bp), the total number of gene isoforms that could be effectively targeted by piRNAi sequences is above 90% for most of the tracks.
-
-![Isoforms effectively targeted by piRNAi](https://github.com/AmhedVargas/piRNAi_v2/tree/master/img/SF3_combined.jpg?raw=true)
-
-## Construction of piRNAi text-based database from piRNAi-DB tracks
+## Construction of piRNAi text-based database from piRNAi-DB tracks and Hamming distance computations
 In the "src" folder you can find the scripts required to produce the "DataBase" directory. However, please note that it requires as input the results produced by the [piRNA-DB repository](https://github.com/AmhedVargas/piRNAi-DB).
  
 ## Troubleshoot
