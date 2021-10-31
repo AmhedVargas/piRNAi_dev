@@ -81,10 +81,10 @@ tr:nth-child(even) {
                         radioButtons("clustercon", label = HTML("Select piRNA cluster
                                                      [<a href=\"\" onclick=\"$('#explain_cluster_adv').toggle(); return false;\">info</a>]
                                                      "),
-                                     choices = list("21ur-1224 (six piRNAs)" = 1, "21ur-1692 (six piRNAs)" = 2, "21ur-8831 (seven piRNAs)" = 3, "21ur-1610 (eigth piRNAs)" = 4, "21ur-5764 (eigth piRNAs)" = 5), selected = 1, width='100%', inline= TRUE),
+                                     choices = list("Standard piRNA transgene (ClusterE, six piRNAs)" = 1, "ClusterG (six piRNAs)" = 2, "ClusterO (seven piRNAs)" = 3, "ClusterF (eigth piRNAs)" = 4, "New Cluster on 21ur-5764 (eigth piRNAs)" = 5), selected = 1, width='100%', inline= TRUE),
                         HTML("
                      <p align=\"justify\"><div class=\"explain\" style=\"display: none\" id=\"explain_cluster_adv\">
-            We recommend to use the cluster 21ur-1224.
+            We recommend to use the standard piRNAi clusterE (centered on the 21ur-1224 piRNA loci).
                                      </div></p>
                      "),
                         conditionalPanel(condition = "input.clustercon==1",
@@ -166,7 +166,13 @@ tr:nth-child(even) {
                          actionButton("actionAdvsearch", label = "Search piRNAs"),
                         br(),
             br(),
-            selectInput("FluoInput", label = "Common fluorophore", choices=c(as.character(fluo$Name)), selected = 1),
+            selectInput("FluoInput", label = HTML("<b>Common fluorophore
+                    [<a href=\"\" onclick=\"$('#explain_n_fluo').toggle(); return false;\">info</a>]</b>"), choices=c(as.character(fluo$Name)), selected = 1),
+            HTML("
+                     <p align=\"justify\"><div class=\"explain\" style=\"display: none\" id=\"explain_n_fluo\">
+            We have produced guide piRNAs that specifically targets common flurophore tags used in <i>C. elegans</i> labs. Please see the Download tab for more info.
+                                     </div></p>
+                     "),
             actionButton("ActionFluoSearch", label = "Show piRNAs"),
                         ##Dropdown menu
                         ##New button 
@@ -181,7 +187,7 @@ tr:nth-child(even) {
                      mainPanel(
                          h3("A database and cloning system for a genome-wide piRNA interference collection"),
                          HTML("<p align=\"justify\">
-Recently, our lab has developed methods to silence genes via piRNAs instead (Priyadarshini <i>et al., in preparation</i>). piRNAs are a class of small RNAs that are active in the germline. We only recently learned how the piRNAs actually recognize genes (Heng-Chi lab paper and Mello lab paper). 
+Recently, our lab has developed methods to silence genes via piRNAs instead (Priyadarshini <i>et al.</i>, 2021). piRNAs are a class of small RNAs that are active in the germline. We only recently learned how the piRNAs actually recognize genes (Heng-Chi lab paper and Mello lab paper). 
 Knowing the rules, mean that we can design piRNAs to target specific genes and so, that is what we have done here.
 
 This app helps to "),

@@ -109,12 +109,12 @@ shinyServer(function(input, output, session) {
                 selectInput("selectMM", label = HTML("<b>piRNA specificity
                                                            [<a href=\"\" onclick=\"$('#explain_uniqueness').toggle(); return false;\">info</a>]
                                                            <br>(off-target homology)</b>"), 
-                            choices = list("Targets at four mismatches" = 1, "Targets at three mismatches" = 2, 
-                                           "Targets at two mismatches" = 3),
+                            choices = list("Off-targets if 4 mismatches allowed" = 1, "Off-targets if 3 mismatches allowed" = 2, 
+                                           "Off-targets if 2 mismatches allowed" = 3),
                             selected = 1),
                 HTML("
                      <p align=\"justify\"><div class=\"explain\" style=\"display: none\" id=\"explain_uniqueness\">
-            This option specifies the minimum number of mismatches to off-target sites in the exome of <i>C. elegans</i> or <i>C. briggsae</i>.
+            This option specifies how many bp edits are required for a guide piRNA to target another gene of <i>C. elegans</i> or <i>C. briggsae</i>.
                                                  </div></p>
                      "),
             #     radioButtons("cluster", label = HTML("Select piRNA cluster
@@ -297,7 +297,7 @@ shinyServer(function(input, output, session) {
                     siete="tcaatctagtaaactcacttaatgcaattcctccagccacatatgtaaacgttgtatacatgcagaaaacggttttttggttttaatgggaacttttgacaaattgttcgaaaatcttaagctgtcccatttcagttgggtgatcgattt"
                     siete=tolower(siete)
 
-                    xtracom=paste("Recoded 21ur-1224 locus. Parameters: Gene = ",wbid,"; Isoform = ",isoform,"; At least ",mm," mismatches")
+                    xtracom=paste("Standard piRNA transgene (ClusterE). Parameters: Gene = ",wbid,"; Isoform = ",isoform,"; At least ",mm," mismatches")
                     binrev=c(FALSE, TRUE, TRUE, FALSE, TRUE, FALSE)
                     if(ControlEx){
                        xtracom = append(xtracom,"Control experiment: piRNAi Sequences have been reverse complemented. THIS FRAGMENT WONT SILENCE THE SELECTED GENE")
@@ -313,10 +313,10 @@ shinyServer(function(input, output, session) {
                     revc= c(rep("#ff0000",6))
                     tooltis= paste("piRNA",1:6)
 
-                    writeLines(PasteApe(paste(wbid,"_21ur_1224_",sep="",collapse=""),Compseq,pats,fwdc,revc,tooltis,xtracom,toadd,binrev,"Caenorhabditis"),paste("WorkingSpace/users/",session_id,"/piRNAs.txt", sep=""))
+                    writeLines(PasteApe(paste(wbid,"_Standard_ClusterE_",sep="",collapse=""),Compseq,pats,fwdc,revc,tooltis,xtracom,toadd,binrev,"Caenorhabditis"),paste("WorkingSpace/users/",session_id,"/piRNAs.txt", sep=""))
                     
                     output$SimpleFragment <- renderText({
-                        paste("Recoded 21ur-1224 piRNA cluster\n",paste(Compseq,sep="",collapse=""),sep="",collapse="")
+                        paste("Recoded standard piRNA transgene (ClusterE)\n",paste(Compseq,sep="",collapse=""),sep="",collapse="")
                     })
                     
                     downloadButton('DownApeOut', 'Download annotated genbank file')
@@ -403,7 +403,7 @@ shinyServer(function(input, output, session) {
                 siete="tcaatctagtaaactcacttaatgcaattcctccagccacatatgtaaacgttgtatacatgcagaaaacggttttttggttttaatgggaacttttgacaaattgttcgaaaatcttaagctgtcccatttcagttgggtgatcgattt"
                 siete=tolower(siete)
                 
-                xtracom=paste("Recoded 21ur-1224 locus via Advanced Search.")
+                xtracom=paste("Standard piRNA transgene (ClusterE) via Advanced Search.")
                 binrev=c(FALSE, TRUE, TRUE, FALSE, TRUE, FALSE)
                 
                 Compseq=paste(c(uno,seq1,dos,seq2,tres,seq3,cuatro,seq4,cinco,seq5,seis,seq6,siete),sep="",collapse="")
@@ -415,10 +415,10 @@ shinyServer(function(input, output, session) {
                 revc= c(rep("#ff0000",6))
                 tooltis= paste("piRNA",1:6)
                 
-                writeLines(PasteApe("21ur_1224_",Compseq,pats,fwdc,revc,tooltis,xtracom,toadd,binrev,"Caenorhabditis"),paste("WorkingSpace/users/",session_id,"/construct.txt", sep=""))
+                writeLines(PasteApe("Standard_ClusterE_",Compseq,pats,fwdc,revc,tooltis,xtracom,toadd,binrev,"Caenorhabditis"),paste("WorkingSpace/users/",session_id,"/construct.txt", sep=""))
                 
                 output$AdvancedFragment <- renderText({
-                    paste("Recoded 21ur-1224 piRNA cluster\n",paste(Compseq,sep="",collapse=""),sep="",collapse="")
+                    paste("Recoded standard piRNA transgene (ClusterE)\n",paste(Compseq,sep="",collapse=""),sep="",collapse="")
                 })
                 
             downloadButton('DownConOut', 'Download annotated genbank file')
@@ -499,7 +499,7 @@ shinyServer(function(input, output, session) {
                 siete="Atcttcgaagcaacttatttgatgttttataaacgacctgaaacatactggtgatgcccaataatgttttttttaaatttagtctcgtgaaaaaaataaaattaaaacagaaaattacatttgcgccgaagaaacttaagatctggaactt"
                 siete=tolower(siete)
                 
-                xtracom=paste("Recoded 21ur-1692 locus via Advanced Search.")
+                xtracom=paste("Recoded ClusterG via Advanced Search.")
                 binrev=c(TRUE, FALSE, TRUE, TRUE, FALSE, TRUE)
                 
                 Compseq=paste(c(uno,seq1,dos,seq2,tres,seq3,cuatro,seq4,cinco,seq5,seis,seq6,siete),sep="",collapse="")
@@ -511,10 +511,10 @@ shinyServer(function(input, output, session) {
                 revc= c(rep("#ff0000",6))
                 tooltis= paste("piRNA",1:6)
                 
-                writeLines(PasteApe("_21ur-1692_",Compseq,pats,fwdc,revc,tooltis,xtracom,toadd,binrev,"Caenorhabditis"),paste("WorkingSpace/users/",session_id,"/construct.txt", sep=""))
+                writeLines(PasteApe("ClusterG_",Compseq,pats,fwdc,revc,tooltis,xtracom,toadd,binrev,"Caenorhabditis"),paste("WorkingSpace/users/",session_id,"/construct.txt", sep=""))
                 
                 output$AdvancedFragment <- renderText({
-                    paste("Recoded 21ur-1692 piRNA cluster\n",paste(Compseq,sep="",collapse=""),sep="",collapse="")
+                    paste("Recoded piRNA ClusterG\n",paste(Compseq,sep="",collapse=""),sep="",collapse="")
                 })
                 
             downloadButton('DownConOut', 'Download annotated genbank file')
@@ -599,7 +599,7 @@ shinyServer(function(input, output, session) {
                 ocho="cgtcaagtgatcaaaccatcatttttttcagattaagacctgatttgtcagtgaattgaaaaaaacgtgttcattgcgtgtttcgcattttttatatataaaaaagcaagtttcggcggcaataacgaagtattcccaacagatcaatag"
                 ocho=tolower(ocho)
                 
-                xtracom=paste("Recoded 21ur-8831 locus via Advanced Search.")
+                xtracom=paste("Recoded ClusterO via Advanced Search.")
                 binrev=c(FALSE, TRUE, TRUE, TRUE, FALSE, TRUE, FALSE)
                 
                 Compseq=paste(c(uno,seq1,dos,seq2,tres,seq3,cuatro,seq4,cinco,seq5,seis,seq6,siete,seq7,ocho),sep="",collapse="")
@@ -611,10 +611,10 @@ shinyServer(function(input, output, session) {
                 revc= c(rep("#ff0000",7))
                 tooltis= paste("piRNA",1:7)
                 
-                writeLines(PasteApe("21ur-8831_",Compseq,pats,fwdc,revc,tooltis,xtracom,toadd,binrev,"Caenorhabditis"),paste("WorkingSpace/users/",session_id,"/construct.txt", sep=""))
+                writeLines(PasteApe("ClusterO_",Compseq,pats,fwdc,revc,tooltis,xtracom,toadd,binrev,"Caenorhabditis"),paste("WorkingSpace/users/",session_id,"/construct.txt", sep=""))
                 
                 output$AdvancedFragment <- renderText({
-                    paste("Recoded 21ur-8831 piRNA cluster\n",paste(Compseq,sep="",collapse=""),sep="",collapse="")
+                    paste("Recoded piRNA ClusterO\n",paste(Compseq,sep="",collapse=""),sep="",collapse="")
                 })
                 
             downloadButton('DownConOut', 'Download annotated genbank file')
@@ -703,7 +703,7 @@ shinyServer(function(input, output, session) {
                 nueve="ggacagaaatattgatattttgccagttaccaggaaaataaattattctttgcaacatctgactttaagaataaaaactcacaaattccttttccatttctgaaatattttagtgtcctcttcccgcaaccactccctgtaaatcgaaaa"
                 nueve=tolower(nueve)
                 
-                xtracom=paste("Recoded 21ur-1610 locus via Advanced Search.")
+                xtracom=paste("Recoded ClusterF via Advanced Search.")
                 binrev=c(TRUE, FALSE, TRUE, TRUE, TRUE, FALSE, FALSE, FALSE)
                 
                 Compseq=paste(c(uno,seq1,dos,seq2,tres,seq3,cuatro,seq4,cinco,seq5,seis,seq6,siete,seq7,ocho,seq8,nueve),sep="",collapse="")
@@ -715,10 +715,10 @@ shinyServer(function(input, output, session) {
                 revc= c(rep("#ff0000",8))
                 tooltis= paste("piRNA",1:8)
                 
-                writeLines(PasteApe("21ur-1610_",Compseq,pats,fwdc,revc,tooltis,xtracom,toadd,binrev,"Caenorhabditis"),paste("WorkingSpace/users/",session_id,"/construct.txt", sep=""))
+                writeLines(PasteApe("ClusterF_",Compseq,pats,fwdc,revc,tooltis,xtracom,toadd,binrev,"Caenorhabditis"),paste("WorkingSpace/users/",session_id,"/construct.txt", sep=""))
                 
                 output$AdvancedFragment <- renderText({
-                    paste("Recoded 21ur-1610 piRNA cluster\n",paste(Compseq,sep="",collapse=""),sep="",collapse="")
+                    paste("Recoded piRNA ClusterF\n",paste(Compseq,sep="",collapse=""),sep="",collapse="")
                 })
                 
             downloadButton('DownConOut', 'Download annotated genbank file')
@@ -807,7 +807,7 @@ shinyServer(function(input, output, session) {
                 nueve="atcagaaaacacttttttttaacgttcttatgtgaacatttagaaacagtg"
                 nueve=tolower(nueve)
                 
-                xtracom=paste("Recoded 21ur-5764 locus via Advanced Search.")
+                xtracom=paste("Recoded piRNA cluster centered on 21ur-5764 via Advanced Search.")
                 binrev=c(TRUE, TRUE, TRUE, TRUE, FALSE, TRUE, FALSE, TRUE)
                 
                 Compseq=paste(c(uno,seq1,dos,seq2,tres,seq3,cuatro,seq4,cinco,seq5,seis,seq6,siete,seq7,ocho,seq8,nueve),sep="",collapse="")
@@ -873,8 +873,8 @@ shinyServer(function(input, output, session) {
                     column(width = 3, selectInput("AdvSelectMM", label = HTML("<b>piRNA specificity
                     [<a href=\"\" onclick=\"$('#explain_uniqueness_advanced').toggle(); return false;\">info</a>]<br>(off-target homology)
                                                            </b>"),
-                                                  choices = list("Targets at four mismatches" = 1, "Targets at three mismatches" = 2, 
-                                                                 "Targets at two mismatches" = 3),
+                                                  choices = list("Off-targets if 4 mismatches allowed" = 1, "Off-targets if 3 mismatches allowed" = 2, 
+                                                                 "Off-targets if 2 mismatches allowed" = 3),
                                                                       selected = 1)),
                     column(width = 3, sliderInput("Posslider", label = HTML("<b>Relative position in cDNA (%)
                                                                             [<a href=\"\" onclick=\"$('#explain_Posgene').toggle(); return false;\">info</a>]
@@ -905,7 +905,7 @@ shinyServer(function(input, output, session) {
 
                     HTML("
                      <p align=\"justify\"><div class=\"explain\" style=\"display: none\" id=\"explain_uniqueness_advanced\">
-            This option specifies the minimum number of mismatches to off-target sites in the genome or exome of <i>C. elegans</i> or <i>C. briggsae</i>.
+            This option specifies how many bp edits are required for a guide piRNA to target another gene of <i>C. elegans</i> or <i>C. briggsae</i>.
                                                              </div></p>
                      "),
                     
@@ -1497,7 +1497,7 @@ shinyServer(function(input, output, session) {
             }
         }
         
-        FileLines=append(FileLines,paste("COMMENT","Generated using wormbuilder.dev/piRNAi/",sep="     "))
+        FileLines=append(FileLines,paste("COMMENT","Generated using wormbuilder.org/piRNAi/",sep="     "))
         FileLines=append(FileLines,paste("COMMENT","ApEinfo:methylated:1",sep="     "))
         
         if(!(is.null(posipat))){
