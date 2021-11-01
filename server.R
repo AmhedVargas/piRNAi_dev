@@ -106,15 +106,15 @@ shinyServer(function(input, output, session) {
                      <p align=\"justify\"><div class=\"explain\" style=\"display: none\" id=\"explain_isoform\">
             WormBase 270 annotations</div></p>
                      "),
-                selectInput("selectMM", label = HTML("<b>piRNA specificity
+                selectInput("selectMM", label = HTML("<b>sg-piRNA specificity
                                                            [<a href=\"\" onclick=\"$('#explain_uniqueness').toggle(); return false;\">info</a>]
-                                                           <br>(off-target homology)</b>"), 
-                            choices = list("Off-targets if 4 mismatches allowed" = 1, "Off-targets if 3 mismatches allowed" = 2, 
-                                           "Off-targets if 2 mismatches allowed" = 3),
+                                                           </b>"), 
+                            choices = list("Stringent (≥ 4MM)" = 1, "Moderate (≥ 3MM)" = 2, 
+                                           "Relaxed (≥ 2MM)" = 3),
                             selected = 1),
                 HTML("
                      <p align=\"justify\"><div class=\"explain\" style=\"display: none\" id=\"explain_uniqueness\">
-            This option specifies how many bp edits are required for a guide piRNA to target another gene of <i>C. elegans</i> or <i>C. briggsae</i>.
+            This option specifies the minimum Hamming distance (i.e., the number of mismatches) to other protein-coding genes.
                                                  </div></p>
                      "),
             #     radioButtons("cluster", label = HTML("Select piRNA cluster
@@ -132,26 +132,28 @@ shinyServer(function(input, output, session) {
             choices = list("Distributed" = 1, "Towards the 3' end" = 2), selected = 1, width='100%', inline= TRUE),
         	HTML("
                      <p align=\"justify\"><div class=\"explain\" style=\"display: none\" id=\"explain_simp_dist\">
-            Select the preferential place for piRNAi targeting, i.e. distributed uniformely or non-overlapping piRNAs taken sequentially from the 3' end.
+            Select the location of sg-piRNA binding, i.e., sg-piRNAs distributed uniformly or near the 3' end of the transcript.
                                                  </div></p>
                      "),
             ###Uracil complementary
             radioButtons("Uracil_comp", label = HTML("<b>5' Uracil complementarity
                                                                [<a href=\"\" onclick=\"$('#explain_ura_comp').toggle(); return false;\">info</a>]
                                                                </b>"),
-                         choices = list("Distributed" = 1, "Cytosine" = 2), selected = 1, width='100%', inline= TRUE),
+                         choices = list("No preference" = 1, "Cytosine" = 2), selected = 1, width='100%', inline= TRUE),
             HTML("
                      <p align=\"justify\"><div class=\"explain\" style=\"display: none\" id=\"explain_ura_comp\">
-            Select the preferential 5' piRNAi complementarity. <a href=\"https://www.sciencedirect.com/science/article/pii/S009286741830117X\">Evidence</a> suggest that native piRNAs binds preferentially to sites ending in Cytosine.
+            Select the 5' sg-piRNA complementarity. <a href=\"https://www.sciencedirect.com/science/article/pii/S009286741830117X\">Evidence</a> suggests that native piRNAs preferentially match the leading 5' uracil with a cytosine.
                                                  </div></p>
                      "),
             checkboxInput("FlaControl", label = HTML("<b>Negative control
                                                                [<a href=\"\" onclick=\"$('#explain_control').toggle(); return false;\">info</a>]
                                                                </b>"), value = FALSE, width='100%'),
             HTML("<p align=\"justify\"><div class=\"explain\" style=\"display: none\" id=\"explain_control\">
-            Target fragment with piRNAS in sense orientation (non-silencing).
+            Generate negative control piRNAi transgene with sg-piRNAs in the sense orientation (non-silencing).
                                      </div></p>"),
-            actionButton("actionPI", label = "Generate piRNAi cluster")
+            actionButton("actionPI", label = "Generate piRNAi cluster"),
+            
+            HTML("<br><br>Please cite Priyadarshini <i>et al.</i>, (2021), Reprogramming the piRNA pathway for multiplexed and transgenerational gene silencing in <i>C. elegans</i>. Nature Methods.")
             
             )
         })
@@ -870,11 +872,11 @@ shinyServer(function(input, output, session) {
                                                            </b>"), 
                                                  Genes[which(as.character(Genes[,1])==wbid),2])),
                     
-                    column(width = 3, selectInput("AdvSelectMM", label = HTML("<b>piRNA specificity
-                    [<a href=\"\" onclick=\"$('#explain_uniqueness_advanced').toggle(); return false;\">info</a>]<br>(off-target homology)
+                    column(width = 3, selectInput("AdvSelectMM", label = HTML("<b>sg-piRNA specificity
+                    [<a href=\"\" onclick=\"$('#explain_uniqueness_advanced').toggle(); return false;\">info</a>]
                                                            </b>"),
-                                                  choices = list("Off-targets if 4 mismatches allowed" = 1, "Off-targets if 3 mismatches allowed" = 2, 
-                                                                 "Off-targets if 2 mismatches allowed" = 3),
+                                                  choices = list("Stringent (≥ 4MM)" = 1, "Moderate (≥ 3MM)" = 2, 
+                                                                 "Relaxed (≥ 2MM)" = 3),
                                                                       selected = 1)),
                     column(width = 3, sliderInput("Posslider", label = HTML("<b>Relative position in cDNA (%)
                                                                             [<a href=\"\" onclick=\"$('#explain_Posgene').toggle(); return false;\">info</a>]
@@ -886,7 +888,7 @@ shinyServer(function(input, output, session) {
                                                                             </b>
                                                                            ")
                                                   ,0, 100, c(30, 70), step = 5)),
-                    column(width = 2, checkboxGroupInput("CompGroup", label = HTML("<b>5' Complementarity (%)
+                    column(width = 2, checkboxGroupInput("CompGroup", label = HTML("<b>5' Uracil complementarity (%)
                                                                             [<a href=\"\" onclick=\"$('#explain_5p_Comp').toggle(); return false;\">info</a>]
                                                                             </b>
                                                                            "),
@@ -905,13 +907,13 @@ shinyServer(function(input, output, session) {
 
                     HTML("
                      <p align=\"justify\"><div class=\"explain\" style=\"display: none\" id=\"explain_uniqueness_advanced\">
-            This option specifies how many bp edits are required for a guide piRNA to target another gene of <i>C. elegans</i> or <i>C. briggsae</i>.
+            This option specifies the minimum Hamming distance (i.e., the number of mismatches) to other protein-coding genes.
                                                              </div></p>
                      "),
                     
                     HTML("
                      <p align=\"justify\"><div class=\"explain\" style=\"display: none\" id=\"explain_Posgene\">
-            Select the preferential place for piRNAi targeting. Ordering is from the 5' to the 3' of the selected isoform. 
+            Select the location of sg-piRNA binding, i.e., sg-piRNAs distributed uniformly or near the 3' end of the transcript. 
                                                  </div></p>
                      "),
                     
@@ -922,7 +924,7 @@ shinyServer(function(input, output, session) {
                      "),
             HTML("
                      <p align=\"justify\"><div class=\"explain\" style=\"display: none\" id=\"explain_5p_Comp\">
-            Select the preferential 5' piRNAi complementarity. <a href=\"https://www.sciencedirect.com/science/article/pii/S009286741830117X\">Evidence</a> suggest that native piRNAs binds preferentially to sites ending in Cytosine.
+            Select the 5' sg-piRNA complementarity. <a href=\"https://www.sciencedirect.com/science/article/pii/S009286741830117X\">Evidence</a> suggests that native piRNAs preferentially match the leading 5' uracil with a cytosine.
                                                  </div></p>
                      ")
                     )
@@ -939,18 +941,18 @@ shinyServer(function(input, output, session) {
             ##Control for table
             output$AdvDesignControls <- renderUI({
                 fluidRow(
-                    column(width = 3, selectInput("FluoSelectMMG", label = HTML("<b>piRNA genomic specificity
-                    [<a href=\"\" onclick=\"$('#explain_uniqueness_fluo_g').toggle(); return false;\">info</a>]<br>(off-target homology)
+                    column(width = 3, selectInput("FluoSelectMMG", label = HTML("<b>sg-piRNA genomic specificity
+                    [<a href=\"\" onclick=\"$('#explain_uniqueness_fluo_g').toggle(); return false;\">info</a>]
                                                            </b>"),
-                    choices = list("Targets at four mismatches" = 1, "Targets at three mismatches" = 2, 
-                                   "Targets at two mismatches" = 3),
+                    choices = list("Stringent (≥ 4MM)" = 1, "Moderate (≥ 3MM)" = 2, 
+                                   "Relaxed (≥ 2MM)" = 3),
                     selected = 1)),
                     
-                    column(width = 2, selectInput("FluoSelectMMF", label = HTML("<b>piRNA fluorophore specificity
+                    column(width = 2, selectInput("FluoSelectMMF", label = HTML("<b>sg-piRNA fluorophore specificity
                     [<a href=\"\" onclick=\"$('#explain_uniqueness_fluo_f').toggle(); return false;\">info</a>]
                                                            </b>"),
-                    choices = list("No filter" = 1,"Targets at four mismatches" = 2, "Targets at three mismatches" = 3, 
-                                   "Targets at two mismatches" = 4),
+                    choices = list("No filter" = 1,"Stringent (≥ 4MM)" = 2, "Moderate (≥ 3MM)" = 3, 
+                                   "Relaxed (≥ 2MM)" = 4),
                     selected = 1)),
                     column(width = 3, sliderInput("FluoPosslider", label = HTML("<b>Relative position in cDNA (%)
                                                                             [<a href=\"\" onclick=\"$('#explain_Posgene_fluo').toggle(); return false;\">info</a>]
@@ -962,7 +964,7 @@ shinyServer(function(input, output, session) {
                                                                             </b>
                                                                            ")
                                                   ,0, 100, c(30, 70), step = 5)),
-                    column(width = 2, checkboxGroupInput("FluoCompGroup", label = HTML("<b>5' Complementarity (%)
+                    column(width = 2, checkboxGroupInput("FluoCompGroup", label = HTML("<b>5' Uracil complementarity (%)
                                                                             [<a href=\"\" onclick=\"$('#explain_5p_Comp_fluo').toggle(); return false;\">info</a>]
                                                                             </b>
                                                                            "),
@@ -976,19 +978,19 @@ shinyServer(function(input, output, session) {
                     br(),
                     HTML("
                      <p align=\"justify\"><div class=\"explain\" style=\"display: none\" id=\"explain_uniqueness_fluo_g\">
-            This option specifies the minimum number of mismatches to off-target sites in the genome or exome of <i>C. elegans</i> or <i>C. briggsae</i>.
+            This option specifies the minimum Hamming distance (i.e., the number of mismatches) to other protein-coding genes.
             </div></p>
                      "),
             
             HTML("
                      <p align=\"justify\"><div class=\"explain\" style=\"display: none\" id=\"explain_uniqueness_fluo_f\">
-            This option specifies the minimum number of mismatches to off-target sites in other fluorescent proteins.
+            This option specifies the minimum Hamming distance (i.e., the number of mismatches) to common fluorescent proteins.
                                                              </div></p>
                      "),
             
             HTML("
                      <p align=\"justify\"><div class=\"explain\" style=\"display: none\" id=\"explain_Posgene_fluo\">
-            Select the preferential place for piRNAi targeting. Ordering is from the 5' to the 3' of the selected isoform. 
+            Select the location of sg-piRNA binding, i.e., sg-piRNAs distributed uniformly or near the 3' end of the transcript. 
                                                  </div></p>
                      "),
             
