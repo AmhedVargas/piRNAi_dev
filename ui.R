@@ -81,7 +81,7 @@ tr:nth-child(even) {
                         radioButtons("clustercon", label = HTML("Select piRNA cluster
                                                      [<a href=\"\" onclick=\"$('#explain_cluster_adv').toggle(); return false;\">info</a>]
                                                      "),
-                                     choiceNames = list(HTML("Standard piRNA transgene (Cluster<sub>E</sub>, six sg-piRNAs)"), HTML("Cluster<sub>G</sub> (six sg-piRNAs)"), HTML("Cluster<sub>O</sub> (seven sg-piRNAs)"), HTML("Cluster<sub>F</sub> (eigth sg-piRNAs)")),choiceValues=c(1,2,3,4), selected = 1, width='100%', inline= TRUE),
+                                     choiceNames = list(HTML("Standard piRNA transgene (Cluster<sub>E</sub>, six sg-piRNAs)"), HTML("Cluster<sub>G</sub> (six sg-piRNAs)"), HTML("Cluster<sub>O</sub> (seven sg-piRNAs)"), HTML("Cluster<sub>F</sub> (eight sg-piRNAs)")),choiceValues=c(1,2,3,4), selected = 1, width='100%', inline= TRUE),
                         HTML("
                      <p align=\"justify\"><div class=\"explain\" style=\"display: none\" id=\"explain_cluster_adv\">
             We recommend using the standard piRNAi Cluster<sub>E</sub> (centered on the <i>21ur-1224</i> piRNA loci). <b>Note:</b> Cluster<sub>O</sub> and Cluster<sub>F</sub> were tested with six sg-piRNAs but can accomodate additional sg-piRNAs, which may improve silencing.
@@ -205,7 +205,7 @@ tr:nth-child(even) {
                          HTML("<br>Bed files with <i>C. elegans</i> sg-piRNAs with 2MM, 3MM, and 4MM (WS270).
                               
                               <p align=\"justify\">
-                         <a href=\"https://s3.eu-central-1.amazonaws.com/wormbuilder.dev/Downloads/piRNAi_dev/Celegans.tar.gz\">Download</a><br>
+                         <a href=\"https://s3.eu-central-1.amazonaws.com/wormbuilder.dev/Downloads/piRNAi_dev/Celegans.tar.gz\">Download (186 MB)</a><br>
                          <br><h3>Sequences</h3>
                          <table>
   <tr>

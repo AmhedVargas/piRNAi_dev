@@ -142,7 +142,7 @@ shinyServer(function(input, output, session) {
                          choices = list("No preference" = 1, "Cytosine" = 2), selected = 1, width='100%', inline= TRUE),
             HTML("
                      <p align=\"justify\"><div class=\"explain\" style=\"display: none\" id=\"explain_ura_comp\">
-            Select the 5' sg-piRNA complementarity. <a href=\"https://www.sciencedirect.com/science/article/pii/S009286741830117X\">Evidence</a> suggests that native piRNAs preferentially match the leading 5' uracil with a cytosine.
+            Select the 5' sg-piRNA complementarity. <a href=\"https://www.sciencedirect.com/science/article/pii/S009286741830117X\" target=\"_blank\">Evidence</a> suggests that native piRNAs preferentially match the leading 5' uracil with a cytosine.
                                                  </div></p>
                      "),
             checkboxInput("FlaControl", label = HTML("<b>Negative control
@@ -195,7 +195,7 @@ shinyServer(function(input, output, session) {
         idx=c()
         if(nrow(Seltab)< 6){
             output$ErrorMessage <- renderText({
-                paste("Error: Not enough piRNAi fragments were found with the characterisitics described. Try to change to other parameters")
+                paste("Error: Not enough sg-piRNAs were found with the characterisitics described. Try to change to other parameters")
             })
             ErrorFlag=1
         }else{
@@ -224,7 +224,7 @@ shinyServer(function(input, output, session) {
             if(length(which(dist(Seltab[idx,1])<=20)) > 0){
                 
                 output$ErrorMessage <- renderText({
-                    paste("Error: The program selected overlapping piRNAi sites. Try to change the parameters or use Advanced function")
+                    paste("Error: The program selected overlapping sg-piRNAs. Try to change the parameters or use Advanced function")
                 })
                 ErrorFlag=1
                 
@@ -235,7 +235,7 @@ shinyServer(function(input, output, session) {
         if((length(idx) < 6) | (sum(is.na(Seltab[idx,1]))>0)){
             
             output$ErrorMessage <- renderText({
-                paste("Error: Not enough piRNAi sites to create the cluster. Try to change the parameters or use advanced function")
+                paste("Error: Not enough sg-piRNAs to create the cluster. Try to change the parameters or use advanced function")
             })
             ErrorFlag=1
             
@@ -299,13 +299,26 @@ shinyServer(function(input, output, session) {
                     siete="tcaatctagtaaactcacttaatgcaattcctccagccacatatgtaaacgttgtatacatgcagaaaacggttttttggttttaatgggaacttttgacaaattgttcgaaaatcttaagctgtcccatttcagttgggtgatcgattt"
                     siete=tolower(siete)
 
-                    xtracom=paste("Standard piRNA transgene (ClusterE). Parameters: Gene = ",wbid,"; Isoform = ",isoform,"; At least ",mm," mismatches")
+                    commismatches=""
+                    if(mm==4){
+                        commismatches=" Stringent (≥ 4MM)"
+                    }
+                    if(mm==3){
+                        commismatches=" Moderate (≥ 3MM)"
+                    }
+                    if(mm==2){
+                        commismatches=" Relaxed (≥ 2MM)"
+                    }
+                    xtracom=paste("Standard piRNA transgene (ClusterE). Parameters: Gene = ",wbid,"; Isoform = ",isoform,";", commismatches)
                     binrev=c(FALSE, TRUE, TRUE, FALSE, TRUE, FALSE)
                     if(ControlEx){
-                       xtracom = append(xtracom,"Control experiment: piRNAi Sequences have been reverse complemented. THIS FRAGMENT WONT SILENCE THE SELECTED GENE")
+                       xtracom = append(xtracom,"Control experiment: sg-piRNAs have been reverse complemented. THIS FRAGMENT WONT SILENCE THE SELECTED GENE")
                        binrev=!binrev
                     }
-
+                    
+                    ##Add reference
+                    xtracom = append(xtracom,"Priyadarshini et al., (2021), Reprogramming the piRNA pathway for multiplexed and transgenerational gene silencing in C. elegans. Nature Methods.")
+                    
                     Compseq=paste(c(uno,seq1,dos,seq2,tres,seq3,cuatro,seq4,cinco,seq5,seis,seq6,siete),sep="",collapse="")
                     
                     toadd="WorkingSpace/Piconst2.txt"
@@ -313,15 +326,17 @@ shinyServer(function(input, output, session) {
                     pats= c(seq1,seq2,seq3,seq4,seq5,seq6)
                     fwdc= c(rep("#00ff00",6))
                     revc= c(rep("#ff0000",6))
-                    tooltis= paste("piRNA",1:6)
+                    tooltis= paste("sg-piRNA",1:6)
 
                     writeLines(PasteApe(paste(wbid,"_Standard_ClusterE_",sep="",collapse=""),Compseq,pats,fwdc,revc,tooltis,xtracom,toadd,binrev,"Caenorhabditis"),paste("WorkingSpace/users/",session_id,"/piRNAs.txt", sep=""))
                     
                     output$SimpleFragment <- renderText({
-                        paste("Recoded standard piRNA transgene (ClusterE)\n",paste(Compseq,sep="",collapse=""),sep="",collapse="")
+                        paste("Recoded standard piRNA transgene (ClusterE)\n",paste(Compseq,sep="",collapse=""),"\n\n",c("We order the synthetic DNA from Twist Bioscience as non-clonal dsDNA genes; not all DNA synthesis companies are able to generate the fragments."), sep="",collapse="")
                     })
                     
                     downloadButton('DownApeOut', 'Download annotated genbank file')
+                    
+                
                 })
                 
                 
@@ -415,15 +430,19 @@ shinyServer(function(input, output, session) {
                 pats= c(seq1,seq2,seq3,seq4,seq5,seq6)
                 fwdc= c(rep("#00ff00",6))
                 revc= c(rep("#ff0000",6))
-                tooltis= paste("piRNA",1:6)
+                tooltis= paste("sg-piRNA",1:6)
+                
+                xtracom = append(xtracom,"Priyadarshini et al., (2021), Reprogramming the piRNA pathway for multiplexed and transgenerational gene silencing in C. elegans. Nature Methods.")
                 
                 writeLines(PasteApe("Standard_ClusterE_",Compseq,pats,fwdc,revc,tooltis,xtracom,toadd,binrev,"Caenorhabditis"),paste("WorkingSpace/users/",session_id,"/construct.txt", sep=""))
                 
                 output$AdvancedFragment <- renderText({
-                    paste("Recoded standard piRNA transgene (ClusterE)\n",paste(Compseq,sep="",collapse=""),sep="",collapse="")
+                    paste("Recoded standard piRNA transgene (ClusterE)\n",paste(Compseq,sep="",collapse=""),"\n\n",c("We order the synthetic DNA from Twist Bioscience as non-clonal dsDNA genes; not all DNA synthesis companies are able to generate the fragments."),sep="",collapse="")
                 })
                 
             downloadButton('DownConOut', 'Download annotated genbank file')
+            
+            #HTML("We order the synthetic DNA from Twist Bioscience as non-clonal dsDNA genes; not all DNA synthesis companies are able to generate the fragments.")
             
                 })
             
@@ -511,15 +530,19 @@ shinyServer(function(input, output, session) {
                 pats= c(seq1,seq2,seq3,seq4,seq5,seq6)
                 fwdc= c(rep("#00ff00",6))
                 revc= c(rep("#ff0000",6))
-                tooltis= paste("piRNA",1:6)
+                tooltis= paste("sg-piRNA",1:6)
+                
+                xtracom = append(xtracom,"Priyadarshini et al., (2021), Reprogramming the piRNA pathway for multiplexed and transgenerational gene silencing in C. elegans. Nature Methods.")
                 
                 writeLines(PasteApe("ClusterG_",Compseq,pats,fwdc,revc,tooltis,xtracom,toadd,binrev,"Caenorhabditis"),paste("WorkingSpace/users/",session_id,"/construct.txt", sep=""))
                 
                 output$AdvancedFragment <- renderText({
-                    paste("Recoded piRNA ClusterG\n",paste(Compseq,sep="",collapse=""),sep="",collapse="")
+                    paste("Recoded piRNA ClusterG\n",paste(Compseq,sep="",collapse=""),"\n\n",c("We order the synthetic DNA from Twist Bioscience as non-clonal dsDNA genes; not all DNA synthesis companies are able to generate the fragments."),sep="",collapse="")
                 })
                 
             downloadButton('DownConOut', 'Download annotated genbank file')
+            
+            #HTML("We order the synthetic DNA from Twist Bioscience as non-clonal dsDNA genes; not all DNA synthesis companies are able to generate the fragments.")
             
                 })
             
@@ -611,15 +634,18 @@ shinyServer(function(input, output, session) {
                 pats= c(seq1,seq2,seq3,seq4,seq5,seq6,seq7)
                 fwdc= c(rep("#00ff00",7))
                 revc= c(rep("#ff0000",7))
-                tooltis= paste("piRNA",1:7)
+                tooltis= paste("sg-piRNA",1:7)
                 
+                xtracom = append(xtracom,"Priyadarshini et al., (2021), Reprogramming the piRNA pathway for multiplexed and transgenerational gene silencing in C. elegans. Nature Methods.")
                 writeLines(PasteApe("ClusterO_",Compseq,pats,fwdc,revc,tooltis,xtracom,toadd,binrev,"Caenorhabditis"),paste("WorkingSpace/users/",session_id,"/construct.txt", sep=""))
                 
                 output$AdvancedFragment <- renderText({
-                    paste("Recoded piRNA ClusterO\n",paste(Compseq,sep="",collapse=""),sep="",collapse="")
+                    paste("Recoded piRNA ClusterO\n",paste(Compseq,sep="",collapse=""),"\n\n",c("We order the synthetic DNA from Twist Bioscience as non-clonal dsDNA genes; not all DNA synthesis companies are able to generate the fragments."),sep="",collapse="")
                 })
                 
             downloadButton('DownConOut', 'Download annotated genbank file')
+            
+            #HTML("We order the synthetic DNA from Twist Bioscience as non-clonal dsDNA genes; not all DNA synthesis companies are able to generate the fragments.")
             
                 })
             
@@ -715,15 +741,18 @@ shinyServer(function(input, output, session) {
                 pats= c(seq1,seq2,seq3,seq4,seq5,seq6,seq7,seq8)
                 fwdc= c(rep("#00ff00",8))
                 revc= c(rep("#ff0000",8))
-                tooltis= paste("piRNA",1:8)
+                tooltis= paste("sg-piRNA",1:8)
                 
+                xtracom = append(xtracom,"Priyadarshini et al., (2021), Reprogramming the piRNA pathway for multiplexed and transgenerational gene silencing in C. elegans. Nature Methods.")
                 writeLines(PasteApe("ClusterF_",Compseq,pats,fwdc,revc,tooltis,xtracom,toadd,binrev,"Caenorhabditis"),paste("WorkingSpace/users/",session_id,"/construct.txt", sep=""))
                 
                 output$AdvancedFragment <- renderText({
-                    paste("Recoded piRNA ClusterF\n",paste(Compseq,sep="",collapse=""),sep="",collapse="")
+                    paste("Recoded piRNA ClusterF\n",paste(Compseq,sep="",collapse=""),"\n\n",c("We order the synthetic DNA from Twist Bioscience as non-clonal dsDNA genes; not all DNA synthesis companies are able to generate the fragments."),sep="",collapse="")
                 })
                 
             downloadButton('DownConOut', 'Download annotated genbank file')
+            
+            #HTML("We order the synthetic DNA from Twist Bioscience as non-clonal dsDNA genes; not all DNA synthesis companies are able to generate the fragments.")
             
                 })
             
@@ -819,16 +848,18 @@ shinyServer(function(input, output, session) {
                 pats= c(seq1,seq2,seq3,seq4,seq5,seq6,seq7,seq8)
                 fwdc= c(rep("#00ff00",8))
                 revc= c(rep("#ff0000",8))
-                tooltis= paste("piRNA",1:8)
+                tooltis= paste("sg-piRNA",1:8)
                 
+                xtracom = append(xtracom,"Priyadarshini et al., (2021), Reprogramming the piRNA pathway for multiplexed and transgenerational gene silencing in C. elegans. Nature Methods.")
                 writeLines(PasteApe("21ur-5764_",Compseq,pats,fwdc,revc,tooltis,xtracom,toadd,binrev,"Caenorhabditis"),paste("WorkingSpace/users/",session_id,"/construct.txt", sep=""))
                 
                 output$AdvancedFragment <- renderText({
-                    paste("Recoded 21ur-5764 piRNA cluster\n",paste(Compseq,sep="",collapse=""),sep="",collapse="")
+                    paste("Recoded 21ur-5764 piRNA cluster\n",paste(Compseq,sep="",collapse=""),"\n\n",c("We order the synthetic DNA from Twist Bioscience as non-clonal dsDNA genes; not all DNA synthesis companies are able to generate the fragments."),sep="",collapse="")
                 })
                 
             downloadButton('DownConOut', 'Download annotated genbank file')
             
+            #HTML("We order the synthetic DNA from Twist Bioscience as non-clonal dsDNA genes; not all DNA synthesis companies are able to generate the fragments.")
                 })
             
             }
@@ -924,7 +955,7 @@ shinyServer(function(input, output, session) {
                      "),
             HTML("
                      <p align=\"justify\"><div class=\"explain\" style=\"display: none\" id=\"explain_5p_Comp\">
-            Select the 5' sg-piRNA complementarity. <a href=\"https://www.sciencedirect.com/science/article/pii/S009286741830117X\">Evidence</a> suggests that native piRNAs preferentially match the leading 5' uracil with a cytosine.
+            Select the 5' sg-piRNA complementarity. <a href=\"https://www.sciencedirect.com/science/article/pii/S009286741830117X\" target = \"_blank\">Evidence</a> suggests that native piRNAs preferentially match the leading 5' uracil with a cytosine.
                                                  </div></p>
                      ")
                     )
@@ -1001,7 +1032,7 @@ shinyServer(function(input, output, session) {
                      "),
             HTML("
                      <p align=\"justify\"><div class=\"explain\" style=\"display: none\" id=\"explain_5p_Comp_fluo\">
-            Select the preferential 5' piRNAi complementarity. <a href=\"https://www.sciencedirect.com/science/article/pii/S009286741830117X\">Evidence</a> suggest that native piRNAs binds preferentially to sites ending in Cytosine.
+            Select the preferential 5' piRNAi complementarity. <a href=\"https://www.sciencedirect.com/science/article/pii/S009286741830117X\" target = \"_blank\">Evidence</a> suggest that native piRNAs binds preferentially to sites ending in Cytosine.
                                                  </div></p>
                      ")
                 )

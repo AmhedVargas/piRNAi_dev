@@ -41,43 +41,43 @@
                      /ApEinfo_graphicformat="arrow_data {{0 1 2 0 0 -1} {} 0}
                      width 5 offset 0"
      primer_bind     151..151
-                     /locus_tag="21ur-421 (not enriched, 1507 reads)"
-                     /ApEinfo_label="21ur-421 (not enriched, 1507 reads)"
+                     /locus_tag="21ur-421"
+                     /ApEinfo_label="21ur-421"
                      /ApEinfo_fwdcolor="#75d5ff"
                      /ApEinfo_revcolor="#d783ff"
                      /ApEinfo_graphicformat="arrow_data {{0 0.5 0 1 2 0 0 -1 0
                      -0.5} {} 0} width 5 offset 0"
      primer_bind     complement(352..352)
-                     /locus_tag="21ur-1089 (male enriched, 62 reads)"
-                     /ApEinfo_label="21ur-1089 (male enriched, 62 reads)"
+                     /locus_tag="21ur-1089"
+                     /ApEinfo_label="21ur-1089"
                      /ApEinfo_fwdcolor="#75d5ff"
                      /ApEinfo_revcolor="#d783ff"
                      /ApEinfo_graphicformat="arrow_data {{0 0.5 0 1 2 0 0 -1 0
                      -0.5} {} 0} width 5 offset 0"
      primer_bind     complement(521..521)
-                     /locus_tag="21ur-1224 (female enriched, 46 reads)"
-                     /ApEinfo_label="21ur-1224 (female enriched, 46 reads)"
+                     /locus_tag="21ur-1224"
+                     /ApEinfo_label="21ur-1224"
                      /ApEinfo_fwdcolor="#75d5ff"
                      /ApEinfo_revcolor="#d783ff"
                      /ApEinfo_graphicformat="arrow_data {{0 0.5 0 1 2 0 0 -1 0
                      -0.5} {} 0} width 5 offset 0"
      primer_bind     824..824
-                     /locus_tag="21ur-488 (male enriched, 386 reads)"
-                     /ApEinfo_label="21ur-488 (male enriched, 386 reads)"
+                     /locus_tag="21ur-488"
+                     /ApEinfo_label="21ur-488"
                      /ApEinfo_fwdcolor="#75d5ff"
                      /ApEinfo_revcolor="#d783ff"
                      /ApEinfo_graphicformat="arrow_data {{0 0.5 0 1 2 0 0 -1 0
                      -0.5} {} 0} width 5 offset 0"
      primer_bind     complement(1071..1071)
-                     /locus_tag="21ur-2948 (male enriched, 233 reads)"
-                     /ApEinfo_label="21ur-2948 (male enriched, 233 reads)"
+                     /locus_tag="21ur-2948"
+                     /ApEinfo_label="21ur-2948"
                      /ApEinfo_fwdcolor="#75d5ff"
                      /ApEinfo_revcolor="#d783ff"
                      /ApEinfo_graphicformat="arrow_data {{0 0.5 0 1 2 0 0 -1 0
                      -0.5} {} 0} width 5 offset 0"
      primer_bind     1174..1174
-                     /locus_tag="21ur-3471 (female enriched, 116 reads)"
-                     /ApEinfo_label="21ur-3471 (female enriched, 116 reads)"
+                     /locus_tag="21ur-3471"
+                     /ApEinfo_label="21ur-3471"
                      /ApEinfo_fwdcolor="#75d5ff"
                      /ApEinfo_revcolor="#d783ff"
                      /ApEinfo_graphicformat="arrow_data {{0 0.5 0 1 2 0 0 -1 0
