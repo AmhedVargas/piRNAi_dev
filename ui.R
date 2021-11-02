@@ -12,12 +12,33 @@ library(DT)
 fluo=read.table("WorkingSpace/Fluo_sizes.tab", sep="\t", stringsAsFactors=F)
 colnames(fluo)=c("Name","File","Size")
 
+###Extra javascript function for input text
+jscode <- '
+$(function() {
+  var $els = $("[data-proxy-click]");
+  $.each(
+    $els,
+    function(idx, el) {
+      var $el = $(el);
+      var $proxy = $("#" + $el.data("proxyClick"));
+      $el.keydown(function (e) {
+        if (e.keyCode == 13) {
+          $proxy.click();
+        }
+      });
+    }
+  );
+});
+'
+
 # Define User interface
 shinyUI(
     fluidPage(
         tags$head(
             tags$link(rel="stylesheet",type = "text/css", href="bootstrap.min.css")
         ),
+        ##Javascript code
+        tags$head(tags$script(HTML(jscode))),
         ##Custom extra styles: single sliders background and title of navbar 
         tags$style(type = 'text/css', 
                    ".js-irs-none .irs-single, .js-irs-none .irs-bar-edge, .js-irs-none .irs-bar {
@@ -61,7 +82,9 @@ tr:nth-child(even) {
                          tabsetPanel(
                             tabPanel("Simple",
                                      br(),
+                                     tagAppendAttributes(
                          textAreaInput("geneinput", label = "Target gene", value = "", resize="none", placeholder= "WormbaseID, transcript or gene name", rows=1),
+                         `data-proxy-click` = "actiongenesearch"),
                          actionButton("actiongenesearch", label = "Search"),
                          hr(),
                          uiOutput("DesignControls"),
@@ -71,6 +94,7 @@ tr:nth-child(even) {
                          htmlOutput("SelPiTabSummary"),
                          tableOutput('SelPiTab'),
                          verbatimTextOutput("SimpleFragment"),
+                         htmlOutput("RefMesSim"),
                          uiOutput("downloadseq")
                          ),
                          tabPanel("Advanced",
@@ -154,6 +178,7 @@ tr:nth-child(even) {
                         )),
                         column(8,
                         verbatimTextOutput("AdvancedFragment"),
+                        htmlOutput("RefMesAdv"),
                         uiOutput("downloadconstruct"))
                         ),
                         
@@ -162,7 +187,9 @@ tr:nth-child(even) {
                          column(2,actionButton("actionconstruct", label = "Generate piRNAi cluster"))),
                          verbatimTextOutput("AdvancedErrorMessage"),
                          hr(),
+                          tagAppendAttributes(
                          textAreaInput("Advancedgeneinput", label = "Gene target", value = "", resize="none", placeholder= "WormbaseID, transcript or gene name", rows=1),
+                         `data-proxy-click` = "actionAdvsearch"),
                          actionButton("actionAdvsearch", label = "Search piRNAs"),
                         br(),
             br(),

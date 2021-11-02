@@ -165,6 +165,7 @@ shinyServer(function(input, output, session) {
     observeEvent(input$actionPI, {
         ErrorFlag = 0
         output$ErrorMessage <- renderText({})
+        output$RefMesSim <- renderUI({})
         
         matches=as.integer(input$selectMM)
         mm=c(4,3,2)[matches]
@@ -266,6 +267,9 @@ shinyServer(function(input, output, session) {
                 output$SelPiTabSummary <- renderUI({ HTML(paste0("<b>Synthetic piRNAs</b>",sep=""))})
                 output$SelPiTab=renderTable(Pitab)
                 
+                ##Reference
+                output$RefMesSim <- renderUI({ HTML(paste0("We order the synthetic DNA from Twist Bioscience as non-clonal dsDNA genes; not all DNA synthesis companies are able to generate the fragments.<br>",sep=""))})
+                
                 ##Ape output
                 output$downloadseq <- renderUI({
                     ##If control experiment, invert sequences
@@ -317,7 +321,7 @@ shinyServer(function(input, output, session) {
                     }
                     
                     ##Add reference
-                    xtracom = append(xtracom,"Priyadarshini et al., (2021), Reprogramming the piRNA pathway for multiplexed and transgenerational gene silencing in C. elegans. Nature Methods.")
+                    #xtracom = append(xtracom,"Priyadarshini et al., (2021), Reprogramming the piRNA pathway for multiplexed and transgenerational gene silencing in C. elegans. Nature Methods.")
                     
                     Compseq=paste(c(uno,seq1,dos,seq2,tres,seq3,cuatro,seq4,cinco,seq5,seis,seq6,siete),sep="",collapse="")
                     
@@ -331,7 +335,7 @@ shinyServer(function(input, output, session) {
                     writeLines(PasteApe(paste(wbid,"_Standard_ClusterE_",sep="",collapse=""),Compseq,pats,fwdc,revc,tooltis,xtracom,toadd,binrev,"Caenorhabditis"),paste("WorkingSpace/users/",session_id,"/piRNAs.txt", sep=""))
                     
                     output$SimpleFragment <- renderText({
-                        paste("Recoded standard piRNA transgene (ClusterE)\n",paste(Compseq,sep="",collapse=""),"\n\n",c("We order the synthetic DNA from Twist Bioscience as non-clonal dsDNA genes; not all DNA synthesis companies are able to generate the fragments."), sep="",collapse="")
+                        paste("Recoded standard piRNA transgene (ClusterE)\n",paste(Compseq,sep="",collapse=""), sep="",collapse="")
                     })
                     
                     downloadButton('DownApeOut', 'Download annotated genbank file')
@@ -349,6 +353,7 @@ shinyServer(function(input, output, session) {
     observeEvent(input$actionconstruct, {
         AdvancedErrorFlag=0
         output$AdvancedErrorMessage <- renderText({})
+        output$RefMesAdv <- renderUI({})
         clust=as.character(input$clustercon)
 
         if(clust == "1"){
@@ -397,6 +402,7 @@ shinyServer(function(input, output, session) {
         
         ##Main Routine
         if(AdvancedErrorFlag == 0){
+            output$RefMesAdv <- renderUI({ HTML(paste0("We order the synthetic DNA from Twist Bioscience as non-clonal dsDNA genes; not all DNA synthesis companies are able to generate the fragments.<br>",sep=""))})
             output$downloadconstruct <- renderUI({
             
                 uno="cgcgcttgacgcgctagtcaactaacataaaaaaggtgaaacattgcgaggatacatagaaaaaacaatacttcgaattcatttttcaattacaaatcctgaaatgtttcactgtgttcctataagaaaacattgaaacaaaatattAagT"
@@ -432,12 +438,12 @@ shinyServer(function(input, output, session) {
                 revc= c(rep("#ff0000",6))
                 tooltis= paste("sg-piRNA",1:6)
                 
-                xtracom = append(xtracom,"Priyadarshini et al., (2021), Reprogramming the piRNA pathway for multiplexed and transgenerational gene silencing in C. elegans. Nature Methods.")
+                #xtracom = append(xtracom,"Priyadarshini et al., (2021), Reprogramming the piRNA pathway for multiplexed and transgenerational gene silencing in C. elegans. Nature Methods.")
                 
                 writeLines(PasteApe("Standard_ClusterE_",Compseq,pats,fwdc,revc,tooltis,xtracom,toadd,binrev,"Caenorhabditis"),paste("WorkingSpace/users/",session_id,"/construct.txt", sep=""))
                 
                 output$AdvancedFragment <- renderText({
-                    paste("Recoded standard piRNA transgene (ClusterE)\n",paste(Compseq,sep="",collapse=""),"\n\n",c("We order the synthetic DNA from Twist Bioscience as non-clonal dsDNA genes; not all DNA synthesis companies are able to generate the fragments."),sep="",collapse="")
+                    paste("Recoded standard piRNA transgene (ClusterE)\n",paste(Compseq,sep="",collapse=""),sep="",collapse="")
                 })
                 
             downloadButton('DownConOut', 'Download annotated genbank file')
@@ -532,14 +538,15 @@ shinyServer(function(input, output, session) {
                 revc= c(rep("#ff0000",6))
                 tooltis= paste("sg-piRNA",1:6)
                 
-                xtracom = append(xtracom,"Priyadarshini et al., (2021), Reprogramming the piRNA pathway for multiplexed and transgenerational gene silencing in C. elegans. Nature Methods.")
+                #xtracom = append(xtracom,"Priyadarshini et al., (2021), Reprogramming the piRNA pathway for multiplexed and transgenerational gene silencing in C. elegans. Nature Methods.")
                 
                 writeLines(PasteApe("ClusterG_",Compseq,pats,fwdc,revc,tooltis,xtracom,toadd,binrev,"Caenorhabditis"),paste("WorkingSpace/users/",session_id,"/construct.txt", sep=""))
                 
                 output$AdvancedFragment <- renderText({
-                    paste("Recoded piRNA ClusterG\n",paste(Compseq,sep="",collapse=""),"\n\n",c("We order the synthetic DNA from Twist Bioscience as non-clonal dsDNA genes; not all DNA synthesis companies are able to generate the fragments."),sep="",collapse="")
+                    paste("Recoded piRNA ClusterG\n",paste(Compseq,sep="",collapse=""),sep="",collapse="")
                 })
-                
+               
+                output$RefMesAdv <- renderUI({ HTML(paste0("We order the synthetic DNA from Twist Bioscience as non-clonal dsDNA genes; not all DNA synthesis companies are able to generate the fragments.<br>",sep=""))}) 
             downloadButton('DownConOut', 'Download annotated genbank file')
             
             #HTML("We order the synthetic DNA from Twist Bioscience as non-clonal dsDNA genes; not all DNA synthesis companies are able to generate the fragments.")
@@ -636,12 +643,14 @@ shinyServer(function(input, output, session) {
                 revc= c(rep("#ff0000",7))
                 tooltis= paste("sg-piRNA",1:7)
                 
-                xtracom = append(xtracom,"Priyadarshini et al., (2021), Reprogramming the piRNA pathway for multiplexed and transgenerational gene silencing in C. elegans. Nature Methods.")
+                #xtracom = append(xtracom,"Priyadarshini et al., (2021), Reprogramming the piRNA pathway for multiplexed and transgenerational gene silencing in C. elegans. Nature Methods.")
                 writeLines(PasteApe("ClusterO_",Compseq,pats,fwdc,revc,tooltis,xtracom,toadd,binrev,"Caenorhabditis"),paste("WorkingSpace/users/",session_id,"/construct.txt", sep=""))
                 
                 output$AdvancedFragment <- renderText({
-                    paste("Recoded piRNA ClusterO\n",paste(Compseq,sep="",collapse=""),"\n\n",c("We order the synthetic DNA from Twist Bioscience as non-clonal dsDNA genes; not all DNA synthesis companies are able to generate the fragments."),sep="",collapse="")
+                    paste("Recoded piRNA ClusterO\n",paste(Compseq,sep="",collapse=""),sep="",collapse="")
                 })
+                
+                output$RefMesAdv <- renderUI({ HTML(paste0("We order the synthetic DNA from Twist Bioscience as non-clonal dsDNA genes; not all DNA synthesis companies are able to generate the fragments.<br>",sep=""))}) 
                 
             downloadButton('DownConOut', 'Download annotated genbank file')
             
@@ -743,12 +752,14 @@ shinyServer(function(input, output, session) {
                 revc= c(rep("#ff0000",8))
                 tooltis= paste("sg-piRNA",1:8)
                 
-                xtracom = append(xtracom,"Priyadarshini et al., (2021), Reprogramming the piRNA pathway for multiplexed and transgenerational gene silencing in C. elegans. Nature Methods.")
+                #xtracom = append(xtracom,"Priyadarshini et al., (2021), Reprogramming the piRNA pathway for multiplexed and transgenerational gene silencing in C. elegans. Nature Methods.")
                 writeLines(PasteApe("ClusterF_",Compseq,pats,fwdc,revc,tooltis,xtracom,toadd,binrev,"Caenorhabditis"),paste("WorkingSpace/users/",session_id,"/construct.txt", sep=""))
                 
                 output$AdvancedFragment <- renderText({
-                    paste("Recoded piRNA ClusterF\n",paste(Compseq,sep="",collapse=""),"\n\n",c("We order the synthetic DNA from Twist Bioscience as non-clonal dsDNA genes; not all DNA synthesis companies are able to generate the fragments."),sep="",collapse="")
+                    paste("Recoded piRNA ClusterF\n",paste(Compseq,sep="",collapse=""),sep="",collapse="")
                 })
+                
+                output$RefMesAdv <- renderUI({ HTML(paste0("We order the synthetic DNA from Twist Bioscience as non-clonal dsDNA genes; not all DNA synthesis companies are able to generate the fragments.<br>",sep=""))}) 
                 
             downloadButton('DownConOut', 'Download annotated genbank file')
             
@@ -850,12 +861,14 @@ shinyServer(function(input, output, session) {
                 revc= c(rep("#ff0000",8))
                 tooltis= paste("sg-piRNA",1:8)
                 
-                xtracom = append(xtracom,"Priyadarshini et al., (2021), Reprogramming the piRNA pathway for multiplexed and transgenerational gene silencing in C. elegans. Nature Methods.")
+                #xtracom = append(xtracom,"Priyadarshini et al., (2021), Reprogramming the piRNA pathway for multiplexed and transgenerational gene silencing in C. elegans. Nature Methods.")
                 writeLines(PasteApe("21ur-5764_",Compseq,pats,fwdc,revc,tooltis,xtracom,toadd,binrev,"Caenorhabditis"),paste("WorkingSpace/users/",session_id,"/construct.txt", sep=""))
                 
                 output$AdvancedFragment <- renderText({
-                    paste("Recoded 21ur-5764 piRNA cluster\n",paste(Compseq,sep="",collapse=""),"\n\n",c("We order the synthetic DNA from Twist Bioscience as non-clonal dsDNA genes; not all DNA synthesis companies are able to generate the fragments."),sep="",collapse="")
+                    paste("Recoded 21ur-5764 piRNA cluster\n",paste(Compseq,sep="",collapse=""),sep="",collapse="")
                 })
+                
+                output$RefMesAdv <- renderUI({ HTML(paste0("We order the synthetic DNA from Twist Bioscience as non-clonal dsDNA genes; not all DNA synthesis companies are able to generate the fragments.<br>",sep=""))}) 
                 
             downloadButton('DownConOut', 'Download annotated genbank file')
             
@@ -1531,6 +1544,7 @@ shinyServer(function(input, output, session) {
         }
         
         FileLines=append(FileLines,paste("COMMENT","Generated using wormbuilder.org/piRNAi/",sep="     "))
+        FileLines=append(FileLines,paste("COMMENT","Priyadarshini et al., (2021), Reprogramming the piRNA pathway for multiplexed and transgenerational gene silencing in C. elegans. Nature Methods.",sep="     "))
         FileLines=append(FileLines,paste("COMMENT","ApEinfo:methylated:1",sep="     "))
         
         if(!(is.null(posipat))){
