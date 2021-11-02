@@ -187,9 +187,9 @@ tr:nth-child(even) {
                          column(2,actionButton("actionconstruct", label = "Generate piRNAi cluster"))),
                          verbatimTextOutput("AdvancedErrorMessage"),
                          hr(),
-                          tagAppendAttributes(
+                          #tagAppendAttributes(
                          textAreaInput("Advancedgeneinput", label = "Gene target", value = "", resize="none", placeholder= "WormbaseID, transcript or gene name", rows=1),
-                         `data-proxy-click` = "actionAdvsearch"),
+                         #`data-proxy-click` = "actionAdvsearch"),
                          actionButton("actionAdvsearch", label = "Search piRNAs"),
                         br(),
             br(),
