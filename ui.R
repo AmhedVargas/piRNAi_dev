@@ -82,9 +82,9 @@ tr:nth-child(even) {
                          tabsetPanel(
                             tabPanel("Simple",
                                      br(),
-                                     tagAppendAttributes(
+                                     #tagAppendAttributes(
                          textAreaInput("geneinput", label = "Target gene", value = "", resize="none", placeholder= "WormbaseID, transcript or gene name", rows=1),
-                         `data-proxy-click` = "actiongenesearch"),
+                         #`data-proxy-click` = "actiongenesearch"),
                          actionButton("actiongenesearch", label = "Search"),
                          hr(),
                          uiOutput("DesignControls"),
