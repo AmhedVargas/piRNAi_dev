@@ -229,10 +229,10 @@ tr:nth-child(even) {
             tabPanel("Downloads",
                      mainPanel(
                          h3("Tracks"),
-                         HTML("<br>Bed files with <i>C. elegans</i> sg-piRNAs with 2MM, 3MM, and 4MM (WS270).
+                         HTML("<br>Bed tracks with <i>C. elegans</i>  (WS270) guide-piRNAs for each specifity criteria.
                               
                               <p align=\"justify\">
-                         <a href=\"https://s3.eu-central-1.amazonaws.com/wormbuilder.dev/Downloads/piRNAi_dev/Celegans.tar.gz\">Download (186 MB)</a><br>
+                         <a href=\"https://s3.eu-central-1.amazonaws.com/wormbuilder.dev/Downloads/piRNAi_dev/piRNAi_Cel_WS270.tar.gz\">Download (307 MB)</a><br>
                          <br><h3>Sequences</h3>
                          <table>
   <tr>
