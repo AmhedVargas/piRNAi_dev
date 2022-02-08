@@ -153,7 +153,7 @@ shinyServer(function(input, output, session) {
                                      </div></p>"),
             actionButton("actionPI", label = "Generate piRNAi cluster"),
             
-            HTML("<br><br>Please cite Priyadarshini <i>et al.</i>, (2021), Reprogramming the piRNA pathway for multiplexed and transgenerational gene silencing in <i>C. elegans</i>. Nature Methods.")
+            HTML("<br><br>Please cite <a href=\"https://doi.org/10.1038/s41592-021-01369-z\">Priyadarshini <i>et al.</i>, (2022), Reprogramming the piRNA pathway for multiplexed and transgenerational gene silencing in <i>C. elegans</i>. Nature Methods</a>.")
             
             )
         })
@@ -1544,7 +1544,7 @@ shinyServer(function(input, output, session) {
         }
         
         FileLines=append(FileLines,paste("COMMENT","Generated using wormbuilder.org/piRNAi/",sep="     "))
-        FileLines=append(FileLines,paste("COMMENT","Priyadarshini et al., (2021), Reprogramming the piRNA pathway for multiplexed and transgenerational gene silencing in C. elegans. Nature Methods.",sep="     "))
+        FileLines=append(FileLines,paste("COMMENT","Priyadarshini et al., (2022), Reprogramming the piRNA pathway for multiplexed and transgenerational gene silencing in C. elegans. Nature Methods.",sep="     "))
         FileLines=append(FileLines,paste("COMMENT","ApEinfo:methylated:1",sep="     "))
         
         if(!(is.null(posipat))){
