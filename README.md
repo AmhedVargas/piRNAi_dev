@@ -52,5 +52,5 @@ Please feel free to [e-mail me](mailto:amhed.velazquez@kaust.edu.sa) for any que
 
 ## Citation
 Please cite our publication:
-[Priyadarshini, M., Ni, J.Z., Vargas-Velazquez, A.M. et al. Reprogramming the piRNA pathway for multiplexed and transgenerational gene silencing in C. elegans. Nat Methods 2022]https://doi.org/10.1038/s41592-021-01369-z).
+[Priyadarshini, M., Ni, J.Z., Vargas-Velazquez, A.M. et al. Reprogramming the piRNA pathway for multiplexed and transgenerational gene silencing in C. elegans. Nat Methods 2022](https://doi.org/10.1038/s41592-021-01369-z).
 
