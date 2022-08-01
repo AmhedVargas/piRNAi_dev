@@ -38,7 +38,9 @@ shinyUI(
             tags$link(rel="stylesheet",type = "text/css", href="bootstrap.min.css")
         ),
         ##Javascript code
-        tags$head(tags$script(HTML(jscode))),
+        tags$head(tags$script(HTML(jscode)),
+                  includeHTML("www/ga.html")
+                  ),
         ##Custom extra styles: single sliders background and title of navbar 
         tags$style(type = 'text/css', 
                    ".js-irs-none .irs-single, .js-irs-none .irs-bar-edge, .js-irs-none .irs-bar {
